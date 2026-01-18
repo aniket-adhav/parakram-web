@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 import dynamic from "next/dynamic";
 import {
   Menu,
@@ -24,7 +25,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ElegantShape } from "@/components/ui/shape-landing-hero";
-import { useSession, signIn, signOut } from "next-auth/react";
+
+
 
 
 const NAV_LINKS = [
@@ -82,15 +84,12 @@ const SCHEDULE = [
 ];
 
 function Header() {
-  
+  const { data: session } = useSession();
+const user = session?.user;
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const { data: session } = useSession();
-  const user = session?.user;
-  console.log("SESSION USER:", user);  
-  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -98,9 +97,8 @@ function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
- const handleLogout = () => {
+  const handleLogout = () => {
   signOut({ callbackUrl: "/" });
-  setUserMenuOpen(false);
 };
 
 
@@ -115,15 +113,14 @@ function Header() {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+          {/* LOGO */}
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
             <Link href="/" className="font-display text-2xl md:text-3xl tracking-wider text-white">
               PARAKRAM
             </Link>
           </motion.div>
 
+          {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link, i) => (
               <motion.a
@@ -132,50 +129,41 @@ function Header() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="text-sm text-white/70 hover:text-white transition-colors tracking-wide"
+                className="text-sm text-white/70 hover:text-white transition-colors"
               >
                 {link.label}
               </motion.a>
             ))}
           </nav>
-           
 
+          {/* USER / LOGIN */}
           {user ? (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden md:block relative"
-            >
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="hidden md:block relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition-colors"
+                className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10"
               >
-                <img
-                  src={user.image}
-                  alt={user.name}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                <img src={user.image} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
                 <span className="text-white text-sm">{user.name}</span>
-                {user.jerseyVerified && (
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                )}
+                {user.jerseyVerified && <CheckCircle className="w-4 h-4 text-green-500" />}
               </button>
 
               {userMenuOpen && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 mt-2 w-56 bg-black/95 backdrop-blur-xl border border-white/10 rounded-xl overflow-hidden"
+                  className="absolute right-0 mt-2 w-56 bg-black/95 border border-white/10 rounded-xl"
                 >
                   <div className="px-4 py-3 border-b border-white/10">
                     <p className="text-white font-medium">{user.name}</p>
                     <p className="text-white/50 text-sm">{user.email}</p>
                   </div>
+
                   <div className="py-2">
                     <Link
                       href="/jersey-verification"
                       onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2 text-white/70 hover:bg-white/5"
                     >
                       {user.jerseyVerified ? (
                         <CheckCircle className="w-4 h-4 text-green-500" />
@@ -186,17 +174,19 @@ function Header() {
                         {user.jerseyVerified ? "Jersey Verified" : "Verify Jersey"}
                       </span>
                     </Link>
+
                     <Link
                       href="/register"
                       onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2 text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2 text-white/70 hover:bg-white/5"
                     >
                       <Trophy className="w-4 h-4" />
                       <span className="text-sm">Register Sports</span>
                     </Link>
+
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:text-red-300 hover:bg-white/5 transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-2 text-red-400 hover:bg-white/5"
                     >
                       <LogOut className="w-4 h-4" />
                       <span className="text-sm">Logout</span>
@@ -205,89 +195,22 @@ function Header() {
                 </motion.div>
               )}
             </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="hidden md:block"
-              >
-                <Link
-                  href="/login"
-                  className="shiny-cta-btn"
-                >
-                  <span className="relative z-10">Login</span>
-                </Link>
-              </motion.div>
-            )}
+          ) : (
+            <Link href="/login" className="hidden md:block shiny-cta-btn">
+              Login
+            </Link>
+          )}
 
-          <button
-            className="md:hidden text-white p-2"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
+          {/* MOBILE MENU BUTTON */}
+          <button className="md:hidden text-white p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-black/95 backdrop-blur-xl border-t border-white/10 pb-6"
-          >
-            <nav className="flex flex-col gap-4 pt-4">
-              {NAV_LINKS.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-white/70 hover:text-white px-4 py-2 transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-              {user ? (
-                <>
-                  <Link
-                    href="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-white/70 hover:text-white px-4 py-2 transition-colors"
-                  >
-                    Register Sports
-                  </Link>
-                  <Link
-                    href="/jersey-verification"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-white/70 hover:text-white px-4 py-2 transition-colors"
-                  >
-                    {user.jerseyVerified ? "Jersey Verified ✓" : "Verify Jersey"}
-                  </Link>
-                  <button
-                    onClick={() => {
-                      logout();
-                      setMobileMenuOpen(false);
-                    }}
-                    className="mx-4 mt-2 px-5 py-2.5 bg-red-500/20 text-red-400 rounded-full text-sm font-medium"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-<Link
-                    href="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="mx-4 mt-2 px-5 py-2.5 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full text-sm font-medium text-center"
-                  >
-                    Login
-                  </Link>
-              )}
-            </nav>
-          </motion.div>
-        )}
       </div>
     </header>
   );
 }
+
 
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({
@@ -371,7 +294,7 @@ function CountdownTimer() {
 
 function HeroSection() {
   const { data: session } = useSession();
-const user = session?.user;
+  const user = session?.user;
 
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -535,9 +458,10 @@ const user = session?.user;
 }
 
 function JerseyBanner() {
-  const { data: session } = useSession();
-const user = session?.user;
 
+
+  const { data: session } = useSession();
+  const user = session?.user;
 
   return (
     <motion.div
@@ -578,16 +502,143 @@ const user = session?.user;
   );
 }
 
+import { toast } from "sonner";
+
 function JerseyOrderModal({ isOpen, onClose }) {
+
+
+  useEffect(() => {
+  if (isOpen) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "auto";
+  }
+
+  return () => {
+    document.body.style.overflow = "auto";
+  };
+}, [isOpen]);
+
+
+
+  const [showSizeChart, setShowSizeChart] = useState(false);
+  const [activeSizeImg, setActiveSizeImg] = useState(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+const [secretCode, setSecretCode] = useState("");
+
+
+  const sizeChartImages = [
+    "https://res.cloudinary.com/djoqcej0n/image/upload/v1768666803/Screenshot_2026-01-17_214905_wwmn9w.png"
+  ];
+
+
+
+const { data: session } = useSession();
+const user = session?.user;
   const [formData, setFormData] = useState({
     name: "",
+    phoneno:"",
     jerseyName: "",
     jerseyNo: "",
     department: "",
     size: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  // 🔐 Login check
+  if (!user) {
+    toast.error("Please login to order jersey");
+    return;
+  }
+
+  if (!formData.size) {
+    toast.error("Please select jersey size");
+    return;
+  }
+
+  try {
+    setSubmitting(true);
+
+    // 1️⃣ Create Razorpay order
+    const res = await fetch("/api/razorpay/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: 799 }),
+    });
+
+    const order = await res.json();
+
+    // 2️⃣ Razorpay options
+    const options = {
+  key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+  amount: order.amount,
+  currency: "INR",
+  name: "PARAKRAM",
+  description: "Official Jersey Order",
+  order_id: order.id,
+
+  handler: async function (response) {
+  const saveRes = await fetch("/api/jersey/order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: user.id,
+      name: formData.name,
+      email: user.email,
+      phone: formData.phoneno, // ✅ must be "phone"
+      jerseyName: formData.jerseyName,
+      jerseyNo: formData.jerseyNo,
+      department: formData.department,
+      size: formData.size,
+      paymentId: response.razorpay_payment_id,
+    }),
+  });
+
+  if (!saveRes.ok) {
+    const err = await saveRes.json();
+    toast.error(err.message || "Order failed");
+    return;
+  }
+
+  const data = await saveRes.json();
+
+  setSecretCode(data.secretCode);
+  setShowSuccess(true);
+},
+
+
+  prefill: {
+    name: user.name,
+    email: user.email,
+  },
+
+  theme: {
+    color: "#f97316",
+  },
+};
+
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (err) {
+    toast.error("Payment failed. Try again.");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   const departments = [
     "Computer Science",
@@ -603,18 +654,6 @@ function JerseyOrderModal({ isOpen, onClose }) {
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setSubmitting(false);
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-      setFormData({ name: "", jerseyName: "", jerseyNo: "", department: "", size: "" });
-    }, 2000);
-  };
 
   if (!isOpen) return null;
 
@@ -623,7 +662,7 @@ function JerseyOrderModal({ isOpen, onClose }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
       onClick={onClose}
     >
       <motion.div
@@ -631,7 +670,7 @@ function JerseyOrderModal({ isOpen, onClose }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md bg-gradient-to-b from-zinc-900 to-black border border-white/10 rounded-3xl p-6 relative my-8 max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-md mx-auto bg-gradient-to-b from-zinc-900 to-black border border-white/10 rounded-3xl p-6 max-h-[90vh] overflow-y-auto"
       >
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500" />
         
@@ -650,17 +689,52 @@ function JerseyOrderModal({ isOpen, onClose }) {
           <p className="text-white/50 text-xs">Fill in your details to get your official PARAKRAM jersey</p>
         </div>
 
-        {submitted ? (
+       {showSuccess ? (
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            className="text-center py-6"
+            className="text-center py-6 space-y-4"
           >
-            <div className="w-14 h-14 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <CheckCircle className="w-7 h-7 text-green-500" />
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="w-8 h-8 text-green-500" />
             </div>
-            <h3 className="text-lg text-white font-semibold mb-1">Order Submitted!</h3>
-            <p className="text-white/50 text-sm">We&apos;ll contact you soon with payment details.</p>
+
+            <h3 className="text-xl text-white font-semibold">
+              Jersey Ordered Successfully 🎉
+            </h3>
+
+            <p className="text-white/60 text-sm">
+              This secret code will be required for game registration
+            </p>
+
+            {/* SECRET CODE BOX */}
+            <div className="bg-black/40 border border-white/10 rounded-xl py-3 px-4 flex items-center justify-between max-w-xs mx-auto">
+              <span className="text-orange-400 font-mono text-lg tracking-widest">
+                {secretCode}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(secretCode);
+                  toast.success("Secret code copied");
+                }}
+                className="text-xs text-white/70 hover:text-white"
+              >
+                Copy
+              </button>
+            </div>
+
+            <p className="text-xs text-white/40">
+              ⚠️ Save this code carefully. Do not share it.
+            </p>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 px-6 py-2 rounded-full bg-orange-500 text-white text-sm hover:bg-orange-600 transition"
+            >
+              Go to Home
+            </button>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -675,6 +749,22 @@ function JerseyOrderModal({ isOpen, onClose }) {
                 placeholder="Enter your full name"
               />
             </div>
+
+
+            <div>
+                <label className="block text-white/70 text-xs mb-1">Phone Number</label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phoneno}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phoneno: e.target.value })
+                  }
+                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
+                  placeholder="Enter phone number"
+                />
+              </div>
+
 
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -739,6 +829,55 @@ function JerseyOrderModal({ isOpen, onClose }) {
               </div>
             </div>
 
+            <p
+              onClick={() => setShowSizeChart(true)}
+              className="mt-2 text-xs text-orange-400 text-center cursor-pointer hover:underline"
+            >
+              View Size Chart
+            </p>
+                {showSizeChart && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="fixed inset-0 z-[60] bg-black/90 backdrop-blur-xl flex items-center justify-center px-4"
+            >
+              <button
+                onClick={() => setShowSizeChart(false)}
+                className="absolute top-6 right-6 text-white/60 hover:text-white text-xl"
+              >
+                ✕
+              </button>
+
+              <div className="relative w-full max-w-md">
+                <img
+                  src={sizeChartImages[activeSizeImg]}
+                  alt="Size Chart"
+                  className="w-full rounded-xl object-contain"
+                />
+
+                {activeSizeImg > 0 && (
+                  <button
+                    onClick={() => setActiveSizeImg(activeSizeImg - 1)}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full px-3 py-1"
+                  >
+                    ‹
+                  </button>
+                )}
+
+                {activeSizeImg < sizeChartImages.length - 1 && (
+                  <button
+                    onClick={() => setActiveSizeImg(activeSizeImg + 1)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-white bg-black/50 rounded-full px-3 py-1"
+                  >
+                    ›
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+
+
             <motion.button
               type="submit"
               disabled={submitting || !formData.size}
@@ -769,6 +908,10 @@ function JerseyOrderModal({ isOpen, onClose }) {
 
 function GetJerseySection() {
   const [modalOpen, setModalOpen] = useState(false);
+const router = useRouter();
+
+const { data: session } = useSession();
+const user = session?.user;
 
   return (
     <>
@@ -800,7 +943,15 @@ function GetJerseySection() {
             </p>
             
             <motion.button
-              onClick={() => setModalOpen(true)}
+              onClick={() => {
+                      if (!user) {
+                        toast.error("Please login to order jersey");
+                        router.push("/login");
+                        return;
+                      }
+                      setModalOpen(true);
+                }}
+
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-semibold text-lg relative overflow-hidden group"
@@ -819,6 +970,7 @@ function GetJerseySection() {
     </>
   );
 }
+
 
 function AboutSection() {
   const stats = [
@@ -897,6 +1049,7 @@ function AboutSection() {
 }
 
 function SportsSection() {
+ 
   const { data: session } = useSession();
 const user = session?.user;
 

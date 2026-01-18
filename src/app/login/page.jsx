@@ -2,33 +2,31 @@
 
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 
 
 import { PageBackground } from "@/components/PageBackground";
 import { Flame, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useEffect } from "react";
+
 
 export default function LoginPage() {
+ 
   const { data: session, status } = useSession();
-const isLoading = status === "loading";
+  const isLoading = status === "loading";
 
   const router = useRouter();
 
-// useEffect(() => {
-//   if (session && !isLoading) {
-//     router.push("/verify-jersey");
-//   }
-// }, [session, isLoading, router]);
+  useEffect(() => {
+  if (session) {
+    router.push("/");
+  }
+}, [session, router]);
 
 
   const handleGoogleLogin = () => {
   signIn("google", { callbackUrl: "/" });
-};
-
-const handleLogout = () => {
-  signOut({ callbackUrl: "/" });
 };
 
 
@@ -45,14 +43,7 @@ const handleLogout = () => {
     }),
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <PageBackground />
-        <div className="animate-spin w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full" />
-      </div>
-    );
-  }
+
 
   return (
     <main className="min-h-screen flex items-center justify-center px-4">

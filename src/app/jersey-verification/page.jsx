@@ -38,35 +38,86 @@ export default function JerseyVerificationPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/login");
-    }
-  }, [user, isLoading, router]);
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
+
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    if (!jerseyNumber || !collegeName || !playerName) {
-      setError("Please fill in all fields");
-      return;
-    }
+  if (!jerseyNumber || !collegeName || !playerName) {
+    setError("Please fill in all fields");
+    return;
+  }
 
-    if (parseInt(jerseyNumber) < 1 || parseInt(jerseyNumber) > 99) {
-      setError("Jersey number must be between 1 and 99");
-      return;
-    }
+  setIsSubmitting(true);
 
-    setIsSubmitting(true);
-    const result = await verifyJersey(jerseyNumber, collegeName);
+  try {
+    // 1️⃣ Create order
+    const orderRes = await fetch("/api/razorpay/create-order", {
+      method: "POST",
+    });
+    const order = await orderRes.json();
+
+    // 2️⃣ Open Razorpay
+    const options = {
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      amount: order.amount,
+      currency: "INR",
+      name: "PARAKRAM 2025",
+      description: "Jersey Verification Fee",
+      order_id: order.id,
+
+      handler: async function (response) {
+        // 3️⃣ Verify payment
+        const verifyRes = await fetch(
+          "/api/razorpay/verify-payment",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          }
+        );
+
+        const verifyData = await verifyRes.json();
+
+        if (verifyData.success) {
+          // 4️⃣ Mark jersey verified (your existing logic)
+          await verifyJersey(jerseyNumber, collegeName);
+
+          router.push("/register");
+        } else {
+          setError("Payment verification failed");
+        }
+      },
+
+      prefill: {
+        name: playerName,
+        email: user.email,
+      },
+
+      theme: {
+        color: "#f97316",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (err) {
+    setError("Payment failed. Try again.");
+  } finally {
     setIsSubmitting(false);
+  }
+};
 
-    if (result) {
-      router.push("/register");
-    } else {
-      setError("Verification failed. Please try again.");
-    }
-  };
+
+
+
+
 
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },

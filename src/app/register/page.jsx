@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { PageBackground } from "@/components/PageBackground";
-import { useSession, signIn, signOut } from "next-auth/react";
 import {
   ArrowLeft,
   CheckCircle,

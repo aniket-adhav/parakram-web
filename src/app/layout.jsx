@@ -1,18 +1,15 @@
-import "./globals.css";
-import Providers from "./providers";
+"use client";
 
-export const metadata = {
-  title: "PARAKRAM 2025 - College Sports Fest",
-  description: "Unleash the Warrior Within - College Sports Fest 2025",
-};
+import { SessionProvider } from "next-auth/react";
+import "./globals.css";
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        <Providers>
+      <body>
+        <SessionProvider>
           {children}
-        </Providers>
+        </SessionProvider>
       </body>
     </html>
   );
