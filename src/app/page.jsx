@@ -634,7 +634,7 @@ function HeroSection() {
             </a>
             {user ? (
               <Link
-                href="/register"
+                // href=""
                 className="px-8 py-4 bg-white/5 border border-white/20 text-white rounded-full font-semibold hover:bg-white/10 transition-all text-lg"
               >
                 Register Now
