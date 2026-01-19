@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const JerseyOrderSchema = new mongoose.Schema({
   name: { type: String, required: true },
 
-  email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
 
   phone: {
     type: String,
