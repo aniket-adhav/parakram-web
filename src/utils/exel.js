@@ -2,7 +2,6 @@ import ExcelJS from "exceljs";
 import fs from "fs";
 import path from "path";
 import JerseyOrder from "@/models/JerseyOrder";
-import { connectDB } from "@/lib/db";
 
 export async function generateExcelForDepartment(department) {
   await connectDB();
