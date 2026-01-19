@@ -231,7 +231,7 @@ const loginToastShown = useRef(false);
                   <div className="py-2">
           
                     <Link
-                      href="/register"
+                      href="/login"
                       onClick={() => setUserMenuOpen(false)}
                       className="flex items-center gap-3 px-4 py-2 text-white/70 hover:bg-white/5"
                     >
