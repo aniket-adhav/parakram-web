@@ -1,10 +1,12 @@
 "use client";
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+
 import {
   Menu,
   X,
@@ -20,11 +22,19 @@ import {
   LogOut,
   User,
   CheckCircle,
+  AlertCircle,
+  ArrowLeft,
   AlertTriangle,
   Shirt,
+  Shield,
+  Copy,
 } from "lucide-react";
+
+
+
 import { cn } from "@/lib/utils";
 import { ElegantShape } from "@/components/ui/shape-landing-hero";
+
 
 
 
@@ -85,11 +95,35 @@ const SCHEDULE = [
 
 function Header() {
   const { data: session } = useSession();
-const user = session?.user;
+  const user = session?.user;
+  const toast = useAppToast()
+  const params = useSearchParams();
+   const router = useRouter();
+   
+const loginToastShown = useRef(false);
+
 
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+
+
+  useEffect(() => {
+    if (params.get("login") === "success" && session?.user && !loginToastShown.current) {
+      toast.show({
+        title: "Login Successful",
+        message: "Welcome to PARAKRAM 👋",
+        variant: "success",
+      });
+
+      loginToastShown.current = true;
+      // ✅ REMOVE ?login=success WITHOUT RELOAD
+      router.replace("/", { scroll: false });
+    }
+  }, [params, session, router]);
+
+
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -97,9 +131,18 @@ const user = session?.user;
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = () => {
-  signOut({ callbackUrl: "/" });
-};
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    toast.show({
+      title: "Logged Out",
+      message: "You have been logged out successfully",
+      variant: "success",
+    });
+    router.push("/");  
+  };
+
+  const [loginLoading, setLoginLoading] = useState(false);
+
 
 
   return (
@@ -137,16 +180,42 @@ const user = session?.user;
           </nav>
 
           {/* USER / LOGIN */}
-          {user ? (
+          {status === "loading" ? (
+  /* 👇 Placeholder to avoid flash */
+            <div className="hidden md:block w-[120px] h-10 rounded-full bg-white/5 animate-pulse" />
+          ) : user ? (
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="hidden md:block relative">
-              <button
+             <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10"
+                className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full hover:bg-white/10 transition"
               >
-                <img src={user.image} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
-                <span className="text-white text-sm">{user.name}</span>
-                {user.jerseyVerified && <CheckCircle className="w-4 h-4 text-green-500" />}
+                {/* AVATAR */}
+                <div className="relative w-8 h-8 rounded-full overflow-hidden 
+                                border border-white/20 bg-white/10 
+                                flex items-center justify-center shrink-0">
+                  {user.image ? (
+                    <img
+                      src={`${user.image}?v=${session?.expires}`}
+                      alt={user.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <span className="text-white text-xs font-semibold uppercase">
+                      {user.name?.charAt(0)}
+                    </span>
+                  )}
+                </div>
+
+                {/* NAME */}
+                <span className="text-white text-sm max-w-[120px] truncate">
+                  {user.name}
+                </span>
               </button>
+
 
               {userMenuOpen && (
                 <motion.div
@@ -160,21 +229,7 @@ const user = session?.user;
                   </div>
 
                   <div className="py-2">
-                    <Link
-                      href="/jersey-verification"
-                      onClick={() => setUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2 text-white/70 hover:bg-white/5"
-                    >
-                      {user.jerseyVerified ? (
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                      ) : (
-                        <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                      )}
-                      <span className="text-sm">
-                        {user.jerseyVerified ? "Jersey Verified" : "Verify Jersey"}
-                      </span>
-                    </Link>
-
+          
                     <Link
                       href="/register"
                       onClick={() => setUserMenuOpen(false)}
@@ -196,15 +251,166 @@ const user = session?.user;
               )}
             </motion.div>
           ) : (
-            <Link href="/login" className="hidden md:block shiny-cta-btn">
-              Login
-            </Link>
+            <div className="hidden md:block">
+              <button
+                onClick={() => {
+                  setLoginLoading(true);
+                  window.location.href = "/login";
+                }}
+                disabled={loginLoading}
+                className="shiny-cta-btn relative"
+              >
+                <span className="relative z-10 flex items-center justify-center gap-3 min-h-[28px]">
+                  {loginLoading && (
+                    <span
+                      className="
+                        w-5 h-5
+                        border-[3px]
+                        border-white/40
+                        border-t-white
+                        rounded-full
+                        animate-spin
+                      "
+                    />
+                  )}
+                  <span className="leading-none">Login</span>
+                </span>
+              </button>
+            </div>
+
           )}
 
           {/* MOBILE MENU BUTTON */}
-          <button className="md:hidden text-white p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* MOBILE HAMBURGER BUTTON */}
+            <button
+                onClick={() => {
+                  if (!mobileMenuOpen) setMobileMenuOpen(true);
+                }}
+                aria-label="Open menu"
+                className="md:hidden text-white p-2 rounded-lg hover:bg-white/10 transition"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+
+
+          <AnimatePresence>
+              {mobileMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md md:hidden"
+                >
+                  <motion.div
+                    initial={{ x: "100%" }}
+                    animate={{ x: 0 }}
+                    exit={{ x: "100%" }}
+                    transition={{ type: "spring", stiffness: 260, damping: 30 }}
+                    className="absolute right-0 top-0 h-full w-72 bg-black border-l border-white/10 px-6 py-6 flex flex-col"
+                  >
+                    {/* CLOSE BUTTON */}
+                    <div className="flex justify-end mb-6">
+                      <button
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="text-white/70 hover:text-white"
+                      >
+                        <X className="w-6 h-6" />
+                      </button>
+                    </div>
+
+                  {/* USER HEADER */}
+
+                      {user && (
+                        <div className="flex items-center gap-3 px-2 pb-4 mb-4 border-b border-white/10">
+                          
+                          {/* AVATAR */}
+                          <div className="relative w-10 h-10 rounded-full overflow-hidden 
+                                                  border border-white/20 bg-white/10 
+                            flex items-center justify-center shrink-0">
+                            {user.image ? (
+                              <img
+                                src={`${user.image}?v=${session?.expires}`}
+                                alt={user.name}
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <span className="text-white text-sm font-semibold uppercase">
+                                {user.name?.charAt(0)}
+                              </span>
+                            )}
+                          </div>
+
+                          {/* USER INFO */}
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-white text-sm font-medium leading-tight truncate">
+                              {user.name}
+                            </span>
+                            <span className="text-white/40 text-xs">
+                              Logged in
+                            </span>
+                          </div>
+
+                        </div>
+                      )}
+
+
+                    {/* LINKS */}
+                    <nav className="flex flex-col gap-4 text-white text-base">
+                      {[
+                        ["Home", "#home"],
+                        ["About", "#about"],
+                        ["Sports", "#sports"],
+                        ["Champions", "#champions"],
+                        ["Schedule", "#schedule"],
+                        ["Contact", "#contact"],
+                      ].map(([label, href]) => (
+                        <a
+                          key={label}
+                          href={href}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="py-2 border-b border-white/10 hover:text-orange-400"
+                        >
+                          {label}
+                        </a>
+                      ))}
+                    </nav>
+
+                    {/* LOGIN / LOGOUT */}
+                    <div className="mt-auto pt-6 border-t border-white/10">
+                      {!user ? (
+                        <Link
+                          href="/login"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="block w-full text-center py-3 rounded-xl 
+                                    bg-gradient-to-r from-orange-500 to-red-600 
+                                    text-white font-semibold"
+                        >
+                          Login
+                        </Link>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setMobileMenuOpen(false);
+                            handleLogout();
+                          }}
+                          className="w-full py-3 rounded-xl bg-white/5 
+                                    border border-white/10 text-red-400 
+                                    font-semibold flex items-center justify-center gap-2"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Logout
+                        </button>
+                      )}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
         </div>
       </div>
     </header>
@@ -214,7 +420,7 @@ const user = session?.user;
 
 function CountdownTimer() {
   const [timeLeft, setTimeLeft] = useState({
-    days: 0,
+    days: 40,
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -223,24 +429,26 @@ function CountdownTimer() {
 
   useEffect(() => {
     setMounted(true);
-    const eventDate = new Date("2025-03-15T09:00:00");
+
+    // 🔥 40 days in milliseconds
+    let remainingTime = 40 * 24 * 60 * 60 * 1000;
 
     const updateTimer = () => {
-      const now = new Date();
-      const diff = eventDate.getTime() - now.getTime();
+      if (remainingTime <= 0) return;
 
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-          minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-          seconds: Math.floor((diff % (1000 * 60)) / 1000),
-        });
-      }
+      remainingTime -= 1000;
+
+      setTimeLeft({
+        days: Math.floor(remainingTime / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((remainingTime / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((remainingTime / (1000 * 60)) % 60),
+        seconds: Math.floor((remainingTime / 1000) % 60),
+      });
     };
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -373,7 +581,7 @@ function HeroSection() {
           >
             <Flame className="h-4 w-4 text-orange-500" />
             <span className="text-sm text-orange-400 tracking-wide font-medium">
-              College Sports Fest 2025
+              College Sports Fest 2026
             </span>
           </motion.div>
 
@@ -503,9 +711,31 @@ function JerseyBanner() {
 }
 
 import { toast } from "sonner";
+import { useAppToast } from "@/lib/useAppToast";
 
-function JerseyOrderModal({ isOpen, onClose }) {
 
+
+const Row = ({ label, value, highlight = false }) => (
+    <div className="flex justify-between items-center py-2 border-b border-white/5">
+      <span className="text-white/50 text-xs">{label}</span>
+      <span
+        className={`text-sm font-medium ${
+          highlight ? "text-orange-400 font-bold" : "text-white"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+
+
+
+function JerseyOrderModal({ isOpen, onClose, onOrderSuccess })
+ {
+
+  const [paymentProcessing, setPaymentProcessing] = useState(false);
+
+  const toast = useAppToast();
 
   useEffect(() => {
   if (isOpen) {
@@ -520,6 +750,16 @@ function JerseyOrderModal({ isOpen, onClose }) {
 }, [isOpen]);
 
 
+const [showConfirmation, setShowConfirmation] = useState(false);
+
+const handleBackToEdit = () => {
+  setShowConfirmation(false);
+};
+
+
+
+
+
 
   const [showSizeChart, setShowSizeChart] = useState(false);
   const [activeSizeImg, setActiveSizeImg] = useState(0);
@@ -532,12 +772,9 @@ const [secretCode, setSecretCode] = useState("");
   ];
 
 
-
-const { data: session } = useSession();
-const user = session?.user;
   const [formData, setFormData] = useState({
     name: "",
-    phoneno:"",
+    phone:"",
     jerseyName: "",
     jerseyNo: "",
     department: "",
@@ -553,18 +790,67 @@ const user = session?.user;
     document.body.appendChild(script);
   }, []);
 
+  const router = useRouter();
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [hasOrdered, setHasOrdered] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  // ✅ ADD THESE LINES 👇👇👇
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    if (!orderDetails?.secretCode) return;
+
+    navigator.clipboard.writeText(orderDetails.secretCode);
+    setCopied(true);
+
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+
+
+
+// 🔙 Go back to edit form
+const handleConfirmOrder = () => {
+  setSubmitting(true);
+  handleSubmit(); // just trigger Razorpay
+};
+
+
+
+
+
 
 const handleSubmit = async (e) => {
-  e.preventDefault();
+  e?.preventDefault(); // ✅ safe optional chaining
+
+  // rest of your logic stays SAME
 
   // 🔐 Login check
+
+
+
+
   if (!user) {
-    toast.error("Please login to order jersey");
+    toast.show({
+      title: "Login Required",
+      message: "Please login to order jersey",
+      variant: "warning",
+    });
+
     return;
   }
 
   if (!formData.size) {
-    toast.error("Please select jersey size");
+    toast.show({
+      title: "Size Required",
+      message: "Please select jersey size",
+      variant: "warning",
+    });
+
     return;
   }
 
@@ -590,33 +876,59 @@ const handleSubmit = async (e) => {
   order_id: order.id,
 
   handler: async function (response) {
-  const saveRes = await fetch("/api/jersey/order", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId: user.id,
-      name: formData.name,
-      email: user.email,
-      phone: formData.phoneno, // ✅ must be "phone"
-      jerseyName: formData.jerseyName,
-      jerseyNo: formData.jerseyNo,
-      department: formData.department,
-      size: formData.size,
-      paymentId: response.razorpay_payment_id,
-    }),
-  });
+  try {
+    setPaymentProcessing(true); // 🔥 SHOW LOADER
 
-  if (!saveRes.ok) {
-    const err = await saveRes.json();
-    toast.error(err.message || "Order failed");
-    return;
-  }
+    const saveRes = await fetch("/api/jersey/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: user.id,
+        name: formData.name,
+        email: user.email,
+        phone: formData.phone,
+        jerseyName: formData.jerseyName,
+        jerseyNo: formData.jerseyNo,
+        department: formData.department,
+        size: formData.size,
+        paymentId: response.razorpay_payment_id,
+      }),
+    });
 
-  const data = await saveRes.json();
+      const data = await saveRes.json();
 
-  setSecretCode(data.secretCode);
-  setShowSuccess(true);
-},
+      if (!saveRes.ok) {
+        toast.error(data.message || "Order failed");
+        setPaymentProcessing(false);
+        return;
+      }
+
+      // ✅ SUCCESS
+      setPaymentProcessing(true);
+
+      setSecretCode(data.secretCode);
+      setShowSuccess(true);
+      setPaymentProcessing(false);
+      toast.show({
+        title: "Payment Successful",
+        message: "Your jersey order has been placed",
+        variant: "success",
+      });
+
+
+      // await signIn("credentials", { redirect: false }); 
+
+
+    } catch (err) {
+      setPaymentProcessing(false);
+      toast.show({
+          title: "Payment Failed",
+          message: "Transaction was not completed. Please try again.",
+          variant: "error",
+        });
+
+    }
+  },
 
 
   prefill: {
@@ -638,6 +950,10 @@ const handleSubmit = async (e) => {
     setSubmitting(false);
   }
 };
+
+
+
+
 
 
   const departments = [
@@ -670,7 +986,18 @@ const handleSubmit = async (e) => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-md mx-auto bg-gradient-to-b from-zinc-900 to-black border border-white/10 rounded-3xl p-6 max-h-[90vh] overflow-y-auto"
+        className={`
+            relative
+            w-[94%] sm:w-full
+            max-w-md mx-auto
+            bg-gradient-to-b from-zinc-900 to-black
+            border border-white/10
+            rounded-3xl
+            p-4 sm:p-6
+            max-h-[88vh] md:max-h-[90vh]
+            ${showSuccess ? "overflow-hidden" : "overflow-y-auto"}
+          `}
+
       >
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-orange-500" />
         
@@ -681,63 +1008,311 @@ const handleSubmit = async (e) => {
           <X className="w-6 h-6" />
         </button>
 
-        <div className="text-center mb-6">
-          <div className="w-14 h-14 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Shirt className="w-7 h-7 text-orange-500" />
-          </div>
-          <h2 className="font-display text-xl text-white mb-1">ORDER YOUR JERSEY</h2>
-          <p className="text-white/50 text-xs">Fill in your details to get your official PARAKRAM jersey</p>
-        </div>
+       {paymentProcessing ? (
 
-       {showSuccess ? (
+        /* ================= LOADER ================= */
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center py-10"
+        >
+          <div className="w-14 h-14 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin mb-4" />
+          <p className="text-white/70 text-sm text-center">
+            Confirming payment & placing your order...
+          </p>
+          <p className="text-white/40 text-xs mt-1">
+            Please don’t close this window
+          </p>
+        </motion.div>
+
+      ) : showSuccess ? (
           <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center py-6 space-y-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="py-4 flex flex-col"
           >
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="w-8 h-8 text-green-500" />
-            </div>
-
-            <h3 className="text-xl text-white font-semibold">
-              Jersey Ordered Successfully 🎉
-            </h3>
-
-            <p className="text-white/60 text-sm">
-              This secret code will be required for game registration
-            </p>
-
-            {/* SECRET CODE BOX */}
-            <div className="bg-black/40 border border-white/10 rounded-xl py-3 px-4 flex items-center justify-between max-w-xs mx-auto">
-              <span className="text-orange-400 font-mono text-lg tracking-widest">
-                {secretCode}
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(secretCode);
-                  toast.success("Secret code copied");
-                }}
-                className="text-xs text-white/70 hover:text-white"
+            <div className="pr-2">
+              {/* ICON */}
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", duration: 0.8 }}
+                className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4"
               >
-                Copy
-              </button>
+                <CheckCircle className="w-8 h-8 text-white" />
+              </motion.div>
+
+              {/* TITLE */}
+              <div className="text-center mb-4">
+                <h3 className="font-display text-xl text-white mb-1">
+                  ORDER SUCCESSFUL 🎉
+                </h3>
+                <p className="text-white/60 text-xs">
+                  Your jersey order has been placed successfully
+                </p>
+              </div>
+
+              {/* SECRET CODE */}
+              <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5, type: "spring" }}
+                  className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-4 mb-4"
+                >
+                  <p className="text-orange-400 text-xs uppercase tracking-wider mb-2 text-center">
+                    Your Secret Code
+                  </p>
+
+                  <div className="flex items-center justify-center gap-2">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.7 }}
+                      className="flex flex-wrap justify-center gap-1 max-w-full"
+                    >
+                      {secretCode.split("").map((digit, i) => (
+                        <motion.span
+                          key={i}
+                          initial={{ opacity: 0, y: 20, rotateX: -90 }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                          transition={{ delay: 0.8 + i * 0.1, type: "spring" }}
+                          className="
+                                          w-7 h-9 sm:w-8 sm:h-10
+                                          bg-black/50 border border-orange-500/50
+                                          rounded-lg flex items-center justify-center
+                                          font-mono text-base sm:text-xl
+                                          text-white font-bold
+                                        "
+                            >
+                          {digit}
+                        </motion.span>
+                      ))}
+                    </motion.div>
+
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 1.4 }}
+                      onClick={handleCopyCode}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      className={`p-2 rounded-lg transition-all ${
+                        copied
+                          ? "bg-green-500/20 text-green-400"
+                          : "bg-white/10 text-white/70 hover:text-white hover:bg-white/20"
+                      }`}
+                    >
+                      {copied ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                    </motion.button>
+                  </div>
+
+                  <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1.5 }}
+                    className="text-white/40 text-xs text-center mt-2"
+                  >
+                    Save this code for jersey collection
+                  </motion.p>
+                </motion.div>
+
+
+              {/* INFO BOX */}
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-3 text-left">
+                <p className="text-yellow-400 text-xs font-medium mb-1">
+                  Important Note
+                </p>
+                <p className="text-yellow-400/70 text-xs">
+                  Your departmental coordinator will contact you regarding jersey
+                  distribution.
+                </p>
+              </div>
+
+              {/* ORDER DETAILS */}
+              <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-xs">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <span className="text-white/40">Jersey:</span>
+                    <span className="text-white/70 ml-1">
+                      {formData.jerseyName} #{formData.jerseyNo}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Size:</span>
+                    <span className="text-white/70 ml-1">{formData.size}</span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Department:</span>
+                    <span className="text-white/70 ml-1">
+                      {formData.department}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-white/40">Status:</span>
+                    <span className="text-green-400 ml-1">Confirmed</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <p className="text-xs text-white/40">
-              ⚠️ Save this code carefully. Do not share it.
-            </p>
-
+            {/* GO HOME */}
             <button
               type="button"
-              onClick={onClose}
-              className="mt-4 px-6 py-2 rounded-full bg-orange-500 text-white text-sm hover:bg-orange-600 transition"
+              onClick={()=>{
+                 onOrderSuccess({
+                    jerseyName: formData.jerseyName,
+                    jerseyNo: formData.jerseyNo,
+                    size: formData.size,
+                    department: formData.department,
+                    secretCode: secretCode,
+                  });
+                  onClose();
+              }}
+              className="mt-4 w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold text-sm hover:opacity-90 transition"
             >
               Go to Home
             </button>
           </motion.div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+        ) : showConfirmation ?(
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="flex flex-col"
+                  >
+                    {/* HEADER */}
+                    <div className="text-center mb-3">
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring", duration: 0.5 }}
+                        className="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-2"
+                      >
+                        <AlertTriangle className="w-6 h-6 text-yellow-500" />
+                      </motion.div>
+                      <h3 className="font-display text-lg text-white mb-1">
+                        CONFIRM YOUR ORDER
+                      </h3>
+                      <p className="text-white/50 text-xs">
+                        Please verify your details before payment
+                      </p>
+                    </div>
+
+                    {/* WARNING */}
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-2.5 mb-3">
+                      <div className="flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-400" />
+                        <p className="text-red-400 text-xs">
+                          <strong>No changes allowed after order!</strong>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* DETAILS */}
+                    <div className="overflow-y-auto max-h-[35vh] pr-1 mb-3 custom-scrollbar scroll-smooth">
+                      <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                        <h4 className="text-white/40 text-xs uppercase tracking-wider mb-3 flex items-center gap-2">
+                          <User className="w-3 h-3" />
+                          Your Order Details
+                        </h4>
+
+                        <div className="space-y-2">
+                          <Row label="Full Name" value={formData.name} />
+                          <Row label="Phone No" value={formData.phone} />
+                          <Row label="Jersey Name" value={formData.jerseyName.toUpperCase()} highlight />
+                          <Row label="Jersey Number" value={`#${formData.jerseyNo}`} highlight />
+                          <Row label="Department" value={formData.department} />
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-white/50 text-xs">Size</span>
+                            <span className="px-3 py-1 bg-orange-500/20 text-orange-400 text-xs font-semibold rounded-full">
+                              {formData.size}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* PRICE */}
+                    <div className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl p-3 mb-4">
+                      <div className="flex justify-between">
+                        <div>
+                          <p className="text-white/50 text-xs">Total Amount</p>
+                          <p className="text-white text-xl font-bold">₹799</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-white/50 text-xs">Payment</p>
+                          <p className="text-green-400 text-sm font-medium">Online</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ACTIONS */}
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleBackToEdit}
+                        className="flex-1 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-sm
+                                  flex items-center justify-center gap-2"
+                      >
+                        <ArrowLeft className="w-4 h-4" />
+                        Edit Details
+                      </button>
+
+
+                      <button
+                        type="button"
+                        onClick={handleConfirmOrder}
+                        disabled={submitting}
+                        className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-red-600 
+                                  text-white rounded-xl font-semibold text-sm
+                                  disabled:opacity-70 disabled:cursor-not-allowed"
+                      >
+                        {submitting ? (
+                          <span className="flex items-center justify-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Processing...
+                          </span>
+                        ) : (
+                          <span className="flex items-center justify-center gap-2">
+                            <CheckCircle className="w-4 h-4" />
+                            Confirm & Pay
+                          </span>
+                        )}
+                      </button>
+
+                    </div>
+                  </motion.div>
+                ):(
+          <>
+          <div className="text-center mb-6">
+            <div className="w-14 h-14 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Shirt className="w-7 h-7 text-orange-500" />
+            </div>
+            <h2 className="font-display text-xl text-white mb-1">
+              ORDER YOUR JERSEY
+            </h2>
+            <p className="text-white/50 text-xs">
+              Fill in your details to get your official PARAKRAM jersey
+            </p>
+          </div>
+
+
+          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
             <div>
               <label className="block text-white/70 text-xs mb-1">Your Name</label>
               <input
@@ -756,9 +1331,9 @@ const handleSubmit = async (e) => {
                 <input
                   type="tel"
                   required
-                  value={formData.phoneno}
+                  value={formData.phone}
                   onChange={(e) =>
-                    setFormData({ ...formData, phoneno: e.target.value })
+                    setFormData({ ...formData, phone: e.target.value })
                   }
                   className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
                   placeholder="Enter phone number"
@@ -788,7 +1363,7 @@ const handleSubmit = async (e) => {
                   max="99"
                   value={formData.jerseyNo}
                   onChange={(e) => setFormData({ ...formData, jerseyNo: e.target.value })}
-                  className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
+                 className="w-full px-3 py-2 md:py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
                   placeholder="0-99"
                 />
               </div>
@@ -800,7 +1375,7 @@ const handleSubmit = async (e) => {
                 required
                 value={formData.department}
                 onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-orange-500/50 transition-colors appearance-none cursor-pointer"
+               className="w-full px-3 py-2 md:py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
               >
                 <option value="" className="bg-zinc-900">Select your department</option>
                 {departments.map((dept) => (
@@ -811,13 +1386,13 @@ const handleSubmit = async (e) => {
 
             <div>
               <label className="block text-white/70 text-xs mb-2">Size</label>
-              <div className="grid grid-cols-7 gap-1.5">
+              <div className="grid grid-cols-7 gap-1 md:gap-1.5">
                 {sizes.map((size) => (
                   <button
                     key={size}
                     type="button"
                     onClick={() => setFormData({ ...formData, size })}
-                    className={`py-2 rounded-lg text-xs font-medium transition-all ${
+                    className={`py-py-1.5 md:py-2 rounded-lg text-xs font-medium transition-all ${
                       formData.size === size
                         ? "bg-orange-500 text-white"
                         : "bg-white/5 border border-white/10 text-white/70 hover:border-orange-500/50"
@@ -879,27 +1454,30 @@ const handleSubmit = async (e) => {
 
 
             <motion.button
-              type="submit"
-              disabled={submitting || !formData.size}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl font-semibold relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-            >
-              <span className="relative flex items-center justify-center gap-2 text-sm">
-                {submitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Shirt className="w-4 h-4" />
-                    Submit Order - ₹799
-                  </>
-                )}
-              </span>
-            </motion.button>
+                type="button"
+                onClick={() => setShowConfirmation(true)}
+                disabled={submitting || !formData.size}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl font-semibold relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              >
+                <span className="relative flex items-center justify-center gap-2 text-sm">
+                  {submitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Shirt className="w-4 h-4" />
+                      Review Order
+                    </>
+                  )}
+                </span>
+              </motion.button>
+
           </form>
+          </>
         )}
       </motion.div>
     </motion.div>
@@ -907,13 +1485,232 @@ const handleSubmit = async (e) => {
 }
 
 function GetJerseySection() {
-  const [modalOpen, setModalOpen] = useState(false);
-const router = useRouter();
+  const router = useRouter();
 
-const { data: session } = useSession();
-const user = session?.user;
+  // ✅ MOVE THESE TO TOP
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [hasOrdered, setHasOrdered] = useState(null); // null = loading
+  const [orderDetails, setOrderDetails] = useState(null);
+
+  // ✅ SAFE NOW
+  useEffect(() => {
+    if (!user?.email) {
+      setHasOrdered(false);
+      setOrderDetails(null);
+      return;
+    }
+
+    const checkOrder = async () => {
+      try {
+        const res = await fetch(
+          `/api/jersey/status?email=${user.email}`
+        );
+        const data = await res.json();
+
+        setHasOrdered(data.ordered);
+        setOrderDetails(data.orderDetails);
+      } catch (err) {
+        console.error("Failed to check jersey status", err);
+        setHasOrdered(false);
+      }
+    };
+
+    checkOrder();
+  }, [user]);
+
+  const handleOrderSuccess = (details) => {
+    setHasOrdered(true);
+    setOrderDetails(details);
+    setModalOpen(false);
+  };
+
+   const [copied, setCopied] = useState(false);
+
+  const handleCopyCode = () => {
+    if (!orderDetails?.secretCode) return;
+
+    navigator.clipboard.writeText(orderDetails.secretCode);
+    setCopied(true);
+
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // ⏳ Optional loader
+  if (hasOrdered === null) return null;
 
   return (
+  <>
+   {hasOrdered ? (
+      <section id="jersey" className="py-16 relative">
+        <div className="container mx-auto px-4 md:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-green-500/10
+                      border border-green-500/20 rounded-3xl p-8 md:p-12
+                      text-center relative overflow-hidden"
+          >
+            {/* BACKGROUND PATTERN */}
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M30%200L60%2030L30%2060L0%2030Z%22%20fill%3D%22rgba(255%2C255%2C255%2C0.02)%22%2F%3E%3C%2Fsvg%3E')]" />
+
+            {/* SUCCESS ICON */}
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", duration: 0.8, bounce: 0.5 }}
+              className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600
+                        rounded-full flex items-center justify-center mx-auto mb-6
+                        shadow-lg shadow-green-500/30"
+            >
+              <CheckCircle className="w-10 h-10 text-white" />
+            </motion.div>
+
+            {/* TITLE */}
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="font-display text-3xl md:text-5xl text-white mb-4"
+            >
+              JERSEY ORDERED SUCCESSFULLY!
+            </motion.h2>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="max-w-2xl mx-auto"
+            >
+              <p className="text-white/60 text-lg mb-6">
+                Your warrior gear is on its way. Get ready to represent your department with pride!
+              </p>
+
+              {/* SECRET CODE CARD */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                className="bg-gradient-to-br from-orange-500/20 to-red-600/20
+                          border border-orange-500/30 rounded-2xl p-6 mb-8
+                          relative overflow-hidden max-w-md mx-auto"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "100%" }}
+                  transition={{ delay: 0.8, duration: 1, ease: "easeInOut" }}
+                />
+
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Shield className="w-5 h-5 text-orange-400" />
+                  <span className="text-orange-400 font-semibold text-sm uppercase tracking-wide">
+                    Your Secret Code
+                  </span>
+                </div>
+
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                    className="flex items-center justify-center gap-2 flex-nowrap"
+                  >
+                    <div className="flex gap-1 flex-nowrap">
+                      {orderDetails?.secretCode?.split("").map((char, index) => (
+                        <motion.span
+                          key={index}
+                          initial={{ opacity: 0, y: 20, rotateX: -90 }}
+                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                          transition={{
+                            delay: 0.9 + index * 0.08,
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 20,
+                          }}
+                          className="
+                            w-7 h-9 text-base
+                            sm:w-8 sm:h-10 sm:text-lg
+                            md:w-10 md:h-12 md:text-2xl
+                            bg-black/50 border border-orange-500/50
+                            rounded-lg flex items-center justify-center
+                            font-mono text-white font-bold
+                          "
+                        >
+                          {char}
+                        </motion.span>
+                      ))}
+                    </div>
+
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 1.5, type: "spring" }}
+                      onClick={handleCopyCode}
+                      className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition shrink-0"
+                    >
+                      {copied ? (
+                        <CheckCircle className="w-4 h-4 text-green-400 md:w-5 md:h-5" />
+                      ) : (
+                        <Copy className="w-4 h-4 text-white/60 md:w-5 md:h-5" />
+                      )}
+                    </motion.button>
+                  </motion.div>
+
+
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.7 }}
+                  className="text-white/40 text-xs mt-4"
+                >
+                  Save this code! You will need it for jersey collection.
+                </motion.p>
+              </motion.div>
+
+              {/* TAGS */}
+              <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                  🏆 <span className="text-white/70 text-sm">Champion in the making</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                  ⚡ <span className="text-white/70 text-sm">Ready to compete</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/10">
+                  🔥 <span className="text-white/70 text-sm">Unleash the warrior</span>
+                </div>
+              </div>
+
+              {/* INFO */}
+              <div className="bg-black/30 border border-white/10 rounded-2xl p-6 backdrop-blur-sm">
+                <p className="text-white/40 text-xs uppercase tracking-wider mb-3">
+                  You're All Set!
+                </p>
+                <p className="text-white/80 text-lg md:text-xl font-light">
+                  Your jersey will be ready for pickup soon. Keep an eye on announcements for collection details.
+                </p>
+                <p className="text-orange-400 text-sm mt-3">See you on the field! 🏅</p>
+              </div>
+
+              {/* STATUS */}
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <div className="flex items-center gap-2 text-green-400">
+                  <CheckCircle className="w-5 h-5" /> Order Confirmed
+                </div>
+                <div className="flex items-center gap-2 text-white/50">
+                  <Shirt className="w-5 h-5" /> Processing
+                </div>
+                <div className="flex items-center gap-2 text-white/50">
+                  <Trophy className="w-5 h-5" /> Ready for Glory
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+    ) : (
+        /* ⬇️ KEEP YOUR EXISTING "Order Jersey" SECTION AS IS ⬇️ */
     <>
       <section id="jersey" className="py-16 relative">
         <div className="container mx-auto px-4 md:px-6">
@@ -939,7 +1736,7 @@ const user = session?.user;
               GET YOUR OFFICIAL JERSEY
             </h2>
             <p className="text-white/50 max-w-xl mx-auto mb-8 relative">
-              Represent your team with pride. Order your official PARAKRAM 2025 jersey now and be part of the legacy.
+              Represent your team with pride. Order your official PARAKRAM 2026 jersey now and be part of the legacy.
             </p>
             
             <motion.button
@@ -966,8 +1763,15 @@ const user = session?.user;
         </div>
       </section>
 
-      <JerseyOrderModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <JerseyOrderModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onOrderSuccess={handleOrderSuccess}
+          />
+
     </>
+  )}
+  </>
   );
 }
 
@@ -1288,7 +2092,7 @@ function ContactSection() {
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center group hover:border-orange-500/50 transition-all">
               <Calendar className="w-8 h-8 text-orange-500 mx-auto mb-4" />
               <h3 className="font-semibold text-white mb-2">Event Dates</h3>
-              <p className="text-white/50 text-sm">March 15-18, 2025</p>
+              <p className="text-white/50 text-sm">March 15-18, 2026</p>
             </div>
           </motion.div>
         </div>
@@ -1317,7 +2121,7 @@ function Footer() {
             ))}
           </nav>
           <p className="text-white/30 text-sm">
-            © 2025 PARAKRAM. All rights reserved.
+            © 2026 PARAKRAM. All rights reserved.
           </p>
         </div>
       </div>

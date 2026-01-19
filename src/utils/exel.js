@@ -14,7 +14,7 @@ export async function generateExcelForDepartment(department) {
 
   sheet.columns = [
     { header: "Name", key: "name" },
-    {header: "Phone No", key: "phone No"},
+    {header: "Phone No", key: "phone"},
     { header: "Email", key: "email" },
     { header: "Jersey Name", key: "jerseyName" },
     { header: "Jersey No", key: "jerseyNo" },

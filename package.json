@@ -3,10 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
+                
+            "dev": "set NODE_OPTIONS=--dns-result-order=ipv4first && next dev",
+            "build": "next build",
+            "start": "next start",
+            "lint": "next lint"
     },
     "dependencies": {
         "@babel/parser": "^7.28.5",
@@ -48,6 +49,7 @@
         "@tsparticles/engine": "^3.8.1",
         "@tsparticles/react": "^3.0.0",
         "@tsparticles/slim": "^3.8.1",
+        "archiver": "^7.0.1",
         "atmn": "^0.0.28",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -109,4 +111,5 @@
         "tw-animate-css": "^1.4.0",
         "typescript": "5.9.3"
     }
+    
 }

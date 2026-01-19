@@ -363,7 +363,10 @@ function RegistrationModal({ sport, isOpen, onClose }) {
 }
 
 export default function RegisterPage() {
-  const { user, isLoading } = useAuth();
+const { data: session, status } = useSession();
+const user = session?.user;
+const isLoading = status === "loading";
+
   const router = useRouter();
   const [selectedSport, setSelectedSport] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);

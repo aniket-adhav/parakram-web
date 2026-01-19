@@ -5,7 +5,7 @@ const JerseyOrderSchema = new mongoose.Schema({
 
   email: { type: String, required: true, unique: true },
 
-  phoneno: {
+  phone: {
     type: String,
     required: true,
   },
