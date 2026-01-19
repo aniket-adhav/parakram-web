@@ -237,6 +237,7 @@
    CUSTOM SCROLLBAR (SLIDER)
    =========================== */
 
+
 @layer utilities {
   /* Firefox */
   .custom-scrollbar {
@@ -270,3 +271,5 @@
     );
   }
 }
+
+

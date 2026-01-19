@@ -45,15 +45,16 @@ function RegistrationModal({ sport, isOpen, onClose }) {
   const [submitted, setSubmitted] = useState(false);
 
   const departments = [
-    "Computer Science",
-    "Electronics",
+    "Computer Gaints",
+    "Electrical Knights",
     "Mechanical",
     "Civil",
-    "Electrical",
+    "ENTC Spartans",
     "Information Technology",
-    "Chemical",
-    "Biotechnology",
-    "Other",
+    "A&R Worriors",
+    "AI&DS Comrades",
+    "FE",
+    "Instu"
   ];
 
   useEffect(() => {

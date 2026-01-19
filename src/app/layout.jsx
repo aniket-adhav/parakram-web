@@ -11,9 +11,9 @@ export default function RootLayout({ children }) {
         <SessionProvider>
           {/* 🔥 THIS IS REQUIRED */}
           <ToastProvider>
-            <div className="min-h-screen overflow-y-auto custom-scrollbar bg-black">
+                
                 {children}
-          </div>
+          
           </ToastProvider>
         </SessionProvider>
       </body>
