@@ -2,14 +2,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Suspense } from "react";
-import { useAppToast } from "@/lib/useAppToast";
-import { toast } from "sonner";
-
 
 
 
@@ -43,9 +39,17 @@ import { ElegantShape } from "@/components/ui/shape-landing-hero";
 
 
 
+
+import { Suspense } from "react";
+import LoginSuccessToast from "@/components/LoginSuccessToast";
+
 export default function Home() {
   return (
     <main className="min-h-screen relative">
+      <Suspense fallback={null}>
+        <LoginSuccessToast />
+      </Suspense>
+
       <GlobalBackground />
       <Header />
       <HeroSection />
@@ -120,7 +124,7 @@ function Header() {
   const { data: session } = useSession();
   const user = session?.user;
   const toast = useAppToast()
-  const searchParams = useSearchParams();
+ // const params = useSearchParams();
    const router = useRouter();
    
 const loginToastShown = useRef(false);
@@ -133,19 +137,19 @@ const loginToastShown = useRef(false);
 
 const isLoading = false; // or your state
 
-  useEffect(() => {
-    if (searchParams.get("login") === "success" && session?.user && !loginToastShown.current) {
-      toast.show({
-        title: "Login Successful",
-        message: "Welcome to PARAKRAM 👋",
-        variant: "success",
-      });
+  // useEffect(() => {
+  //   if (params.get("login") === "success" && session?.user && !loginToastShown.current) {
+  //     toast.show({
+  //       title: "Login Successful",
+  //       message: "Welcome to PARAKRAM 👋",
+  //       variant: "success",
+  //     });
 
-      loginToastShown.current = true;
-      // ✅ REMOVE ?login=success WITHOUT RELOAD
-      router.replace("/", { scroll: false });
-    }
-  }, [searchParams, session, router]);
+  //     loginToastShown.current = true;
+  //     // ✅ REMOVE ?login=success WITHOUT RELOAD
+  //     router.replace("/", { scroll: false });
+  //   }
+  // }, [params, session, router]);
 
 
 
@@ -734,6 +738,8 @@ function JerseyBanner() {
   );
 }
 
+import { toast } from "sonner";
+import { useAppToast } from "@/lib/useAppToast";
 
 
 
