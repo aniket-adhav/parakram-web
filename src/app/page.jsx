@@ -1644,33 +1644,34 @@ function GetJerseySection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7 }}
-                   className="
-                      flex items-center justify-center gap-2
+                    className="
+                      flex items-center justify-center
+                      gap-1 sm:gap-2
                       flex-nowrap
-                      max-w-full overflow-hidden
-                      px-1
+                      max-w-full
                     "
-                    >
-                    <div className="flex gap-[2px] sm:gap-1 md:gap-2 flex-nowrap">
-
+                  >
+                    {/* CODE BLOCKS */}
+                    <div className="flex items-center gap-[2px] sm:gap-1 md:gap-2 flex-nowrap">
                       {orderDetails?.secretCode?.split("").map((char, index) => (
                         <motion.span
                           key={index}
-                          initial={{ opacity: 0, y: 20, rotateX: -90 }}
-                          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-                          transition={{
-                            delay: 0.9 + index * 0.08,
-                            type: "spring",
-                            stiffness: 300,
-                            damping: 20,
-                          }}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 + index * 0.05 }}
                           className="
-                           w-6 h-8 text-sm            
-                            sm:w-8 sm:h-10 sm:text-lg  
+                            /* MOBILE */
+                            w-5 h-7 text-xs
+                            /* SMALL */
+                            sm:w-7 sm:h-9 sm:text-base
+                            /* DESKTOP (UNCHANGED) */
                             md:w-10 md:h-12 md:text-2xl
+
                             bg-black/50 border border-orange-500/50
-                            rounded-lg flex items-center justify-center
+                            rounded-md md:rounded-lg
+                            flex items-center justify-center
                             font-mono text-white font-bold
+                            shrink-0
                           "
                         >
                           {char}
@@ -1678,26 +1679,24 @@ function GetJerseySection() {
                       ))}
                     </div>
 
-                    <motion.button
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 1.5, type: "spring" }}
+                    {/* COPY BUTTON */}
+                    <button
                       onClick={handleCopyCode}
                       className="
-                          p-1.5 sm:p-2
-                          bg-white/10 rounded-lg
-                          hover:bg-white/20 transition
-                          shrink-0
-                        "
-
+                        p-1 sm:p-1.5 md:p-2
+                        bg-white/10 rounded-md md:rounded-lg
+                        hover:bg-white/20 transition
+                        shrink-0
+                      "
                     >
                       {copied ? (
-                        <CheckCircle className="w-4 h-4 text-green-400 md:w-5 md:h-5" />
+                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-green-400" />
                       ) : (
-                        <Copy className="w-4 h-4 text-white/60 md:w-5 md:h-5" />
+                        <Copy className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white/60" />
                       )}
-                    </motion.button>
+                    </button>
                   </motion.div>
+
 
 
                 <motion.p
