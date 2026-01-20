@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+export const dynamic = "force-dynamic";
 import { PageBackground } from "@/components/PageBackground";
 import {
   ArrowLeft,

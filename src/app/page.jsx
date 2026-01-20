@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
+
 import {
   Menu,
   X,
@@ -34,6 +35,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { ElegantShape } from "@/components/ui/shape-landing-hero";
+
 
 
 
@@ -108,6 +110,7 @@ const loginToastShown = useRef(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 
+const isLoading = false; // or your state
 
   useEffect(() => {
     if (params.get("login") === "success" && session?.user && !loginToastShown.current) {
@@ -180,7 +183,7 @@ const loginToastShown = useRef(false);
           </nav>
 
           {/* USER / LOGIN */}
-          {status === "loading" ? (
+          {isLoading ? (
   /* 👇 Placeholder to avoid flash */
             <div className="hidden md:block w-[120px] h-10 rounded-full bg-white/5 animate-pulse" />
           ) : user ? (
@@ -957,15 +960,16 @@ const handleSubmit = async (e) => {
 
 
   const departments = [
-    "Computer Science",
-    "Electronics",
+    "Computer Gaints",
+    "Electrical Knights",
     "Mechanical",
     "Civil",
-    "Electrical",
+    "ENTC Spartans",
     "Information Technology",
-    "Chemical",
-    "Biotechnology",
-    "Other",
+    "A&R Worriors",
+    "AI&DS Comrades",
+    "FE",
+    "Instu"
   ];
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "3XL"];
@@ -1665,7 +1669,7 @@ function GetJerseySection() {
                   transition={{ delay: 1.7 }}
                   className="text-white/40 text-xs mt-4"
                 >
-                  Save this code! You will need it for jersey collection.
+                  Save this code & Don't share with anyone! You will need it for games registration & jersey collection.
                 </motion.p>
               </motion.div>
 
