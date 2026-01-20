@@ -1644,9 +1644,15 @@ function GetJerseySection() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7 }}
-                    className="flex items-center justify-center gap-2 flex-nowrap"
-                  >
-                    <div className="flex gap-1 flex-nowrap">
+                   className="
+                      flex items-center justify-center gap-2
+                      flex-nowrap
+                      max-w-full overflow-hidden
+                      px-1
+                    "
+                    >
+                    <div className="flex gap-[2px] sm:gap-1 md:gap-2 flex-nowrap">
+
                       {orderDetails?.secretCode?.split("").map((char, index) => (
                         <motion.span
                           key={index}
@@ -1659,8 +1665,8 @@ function GetJerseySection() {
                             damping: 20,
                           }}
                           className="
-                            w-7 h-9 text-base
-                            sm:w-8 sm:h-10 sm:text-lg
+                           w-6 h-8 text-sm            
+                            sm:w-8 sm:h-10 sm:text-lg  
                             md:w-10 md:h-12 md:text-2xl
                             bg-black/50 border border-orange-500/50
                             rounded-lg flex items-center justify-center
@@ -1677,7 +1683,13 @@ function GetJerseySection() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 1.5, type: "spring" }}
                       onClick={handleCopyCode}
-                      className="p-2 bg-white/10 rounded-lg hover:bg-white/20 transition shrink-0"
+                      className="
+                          p-1.5 sm:p-2
+                          bg-white/10 rounded-lg
+                          hover:bg-white/20 transition
+                          shrink-0
+                        "
+
                     >
                       {copied ? (
                         <CheckCircle className="w-4 h-4 text-green-400 md:w-5 md:h-5" />
