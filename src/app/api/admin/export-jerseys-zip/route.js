@@ -2,66 +2,87 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import JerseyOrder from "@/models/JerseyOrder";
 import ExcelJS from "exceljs";
-import archiver from "archiver";
-import { PassThrough } from "stream";
+import JSZip from "jszip";
 
 export async function GET() {
-  await connectDB();
+  try {
+    await connectDB();
 
-  const orders = await JerseyOrder.find().lean();
+    // ✅ Fetch all orders FIRST
+    const orders = await JerseyOrder.find({}).lean();
 
-  if (!orders.length) {
+    if (!orders.length) {
+      return NextResponse.json(
+        { message: "No orders found" },
+        { status: 404 }
+      );
+    }
+
+    // ✅ Group by department
+    const grouped = {};
+    for (const order of orders) {
+      const dept = order.department || "Unknown";
+      if (!grouped[dept]) grouped[dept] = [];
+      grouped[dept].push(order);
+    }
+
+    // ✅ Create ZIP in memory
+    const zip = new JSZip();
+
+    // ✅ Create Excel per department (SYNC + SAFE)
+    for (const dept of Object.keys(grouped)) {
+      const workbook = new ExcelJS.Workbook();
+      const sheet = workbook.addWorksheet("Orders");
+
+      sheet.columns = [
+        { header: "Name", key: "name", width: 20 },
+        { header: "Email", key: "email", width: 30 },
+        { header: "Phone", key: "phone", width: 15 },
+        { header: "Jersey Name", key: "jerseyName", width: 15 },
+        { header: "Jersey No", key: "jerseyNo", width: 10 },
+        { header: "Size", key: "size", width: 10 },
+        { header: "Secret Code", key: "secretCode", width: 18 },
+        { header: "Department", key: "department", width: 20 },
+        { header: "Payment ID", key: "paymentId", width: 28 },
+        { header: "Created At", key: "createdAt", width: 22 },
+      ];
+
+      grouped[dept].forEach((o) => {
+        sheet.addRow({
+          name: o.name,
+          email: o.email,
+          phone: o.phone,
+          jerseyName: o.jerseyName,
+          jerseyNo: o.jerseyNo,
+          size: o.size,
+          secretCode: o.secretCode,
+          department: o.department,
+          paymentId: o.paymentId || "",
+          createdAt: new Date(o.createdAt).toLocaleString(),
+        });
+      });
+
+      // ✅ IMPORTANT: fully resolve Excel
+      const excelBuffer = await workbook.xlsx.writeBuffer();
+
+      const safeName = dept.replace(/[^\w]/g, "_");
+      zip.file(`${safeName}.xlsx`, excelBuffer);
+    }
+
+    // ✅ FINAL ZIP BUFFER
+    const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
+
+    return new NextResponse(zipBuffer, {
+      headers: {
+        "Content-Type": "application/zip",
+        "Content-Disposition": 'attachment; filename="jersey-orders.zip"',
+      },
+    });
+  } catch (error) {
+    console.error("Export error:", error);
     return NextResponse.json(
-      { message: "No orders found" },
-      { status: 404 }
+      { error: "Failed to export jersey orders" },
+      { status: 500 }
     );
   }
-
-  // Group orders by department
-  const grouped = {};
-  orders.forEach(order => {
-    const dept = order.department || "Unknown";
-    if (!grouped[dept]) grouped[dept] = [];
-    grouped[dept].push(order);
-  });
-
-  const zipStream = new PassThrough();
-  const archive = archiver("zip", { zlib: { level: 9 } });
-
-  archive.pipe(zipStream);
-
-  // Create Excel file per department
-  for (const dept in grouped) {
-    const workbook = new ExcelJS.Workbook();
-    const sheet = workbook.addWorksheet("Orders");
-
-    sheet.columns = [
-      { header: "Name", key: "name", width: 20 },
-      { header: "Email", key: "email", width: 25 },
-      { header: "Phone", key: "phone", width: 15 },
-      { header: "Jersey Name", key: "jerseyName", width: 15 },
-      { header: "Jersey No", key: "jerseyNo", width: 10 },
-      { header: "Size", key: "size", width: 10 },
-      {header: "Secret Code", key: "secretCode", width: 10},
-      { header: "Department", key: "department", width: 20},
-      { header: "Payment ID", key: "paymentId", width: 25 },
-      { header: "Created At", key: "createdAt", width: 20 },
-    ];
-
-    grouped[dept].forEach(o => sheet.addRow(o));
-
-    const buffer = await workbook.xlsx.writeBuffer();
-
-    const safeName = dept.replace(/\s+/g, "_");
-    archive.append(buffer, { name: `${safeName}.xlsx` });
-  }
-
-  archive.finalize();
-
-  return new NextResponse(zipStream, {
-    headers: {
-      "Content-Type": "application/zip",
-      "Content-Disposition": "attachment; filename=jersey-orders.zip",
-    },
-  });
 }
