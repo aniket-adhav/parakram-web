@@ -6,6 +6,11 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { Suspense } from "react";
+import { useAppToast } from "@/lib/useAppToast";
+import { toast } from "sonner";
+
+
 
 
 import {
@@ -38,7 +43,23 @@ import { ElegantShape } from "@/components/ui/shape-landing-hero";
 
 
 
-
+export default function Home() {
+  return (
+    <main className="min-h-screen relative">
+      <GlobalBackground />
+      <Header />
+      <HeroSection />
+      <JerseyBanner />
+      <GetJerseySection />
+      <AboutSection />
+      <SportsSection />
+      <ChampionsSection />
+      <ScheduleSection />
+      <ContactSection />
+      <Footer />
+    </main>
+  );
+}
 
 
 const NAV_LINKS = [
@@ -99,7 +120,7 @@ function Header() {
   const { data: session } = useSession();
   const user = session?.user;
   const toast = useAppToast()
-  const params = useSearchParams();
+  const searchParams = useSearchParams();
    const router = useRouter();
    
 const loginToastShown = useRef(false);
@@ -113,7 +134,7 @@ const loginToastShown = useRef(false);
 const isLoading = false; // or your state
 
   useEffect(() => {
-    if (params.get("login") === "success" && session?.user && !loginToastShown.current) {
+    if (searchParams.get("login") === "success" && session?.user && !loginToastShown.current) {
       toast.show({
         title: "Login Successful",
         message: "Welcome to PARAKRAM 👋",
@@ -124,7 +145,7 @@ const isLoading = false; // or your state
       // ✅ REMOVE ?login=success WITHOUT RELOAD
       router.replace("/", { scroll: false });
     }
-  }, [params, session, router]);
+  }, [searchParams, session, router]);
 
 
 
@@ -713,8 +734,6 @@ function JerseyBanner() {
   );
 }
 
-import { toast } from "sonner";
-import { useAppToast } from "@/lib/useAppToast";
 
 
 
@@ -2232,21 +2251,5 @@ function GlobalBackground() {
   );
 }
 
-export default function Home() {
-  return (
-    <main className="min-h-screen relative">
-      <GlobalBackground />
-      <Header />
-      <HeroSection />
-      <JerseyBanner />
-      <GetJerseySection />
-      <AboutSection />
-      <SportsSection />
-      <ChampionsSection />
-      <ScheduleSection />
-      <ContactSection />
-      <Footer />
-    </main>
-  );
-}
+
 

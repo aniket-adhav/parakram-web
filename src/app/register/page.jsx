@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 export const dynamic = "force-dynamic";
 import { PageBackground } from "@/components/PageBackground";
 import {
@@ -34,6 +35,11 @@ const SPORTS = [
 ];
 
 function RegistrationModal({ sport, isOpen, onClose }) {
+
+  const { data: session, status } = useSession();
+
+
+
   const [formData, setFormData] = useState({
     captainName: "",
     captainEmail: "",
