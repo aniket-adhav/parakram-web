@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const JerseyOrderSchema = new mongoose.Schema({
   name: { type: String, required: true },
 
-  email: { type: String, unique: true },
+  email: { type: String, required: true,unique: true },
 
   phone: {
     type: String,
@@ -39,7 +39,7 @@ const JerseyOrderSchema = new mongoose.Schema({
 });
 
 // 🔒 One jersey per email
-JerseyOrderSchema.index({ email: 1 }, { unique: true });
+// JerseyOrderSchema.index({ email: 1 }, { unique: true });
 
 export default mongoose.models.JerseyOrder ||
   mongoose.model("JerseyOrder", JerseyOrderSchema);

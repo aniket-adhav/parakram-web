@@ -6,5 +6,5 @@ export function generateSecretCode() {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
 
-  return `PAR-${code}`;
+  return `PAR${code}`;
 }

@@ -270,22 +270,22 @@ export default function LoginPage() {
                 </button>
             </motion.div>
 
-          <motion.div
-            custom={6}
+         <motion.div
+            custom={9}
             variants={fadeUpVariants}
             initial="hidden"
             animate="visible"
-            className="mt-8 pt-6 border-t border-white/10"
+            className="mt-6 pt-6 border-t border-white/10"
           >
             <p className="text-center text-white/40 text-sm">
               By signing in, you agree to our{" "}
-              <span className="text-orange-400 hover:underline cursor-pointer">
+              <Link href="/terms-and-conditions" className="text-orange-400 hover:underline">
                 Terms of Service
-              </span>{" "}
+              </Link>{" "}
               and{" "}
-              <span className="text-orange-400 hover:underline cursor-pointer">
+              <Link href="/privacy-policy" className="text-orange-400 hover:underline">
                 Privacy Policy
-              </span>
+              </Link>
             </p>
           </motion.div>
         </motion.div>
@@ -308,3 +308,8 @@ export default function LoginPage() {
     </main>
   );
 }
+
+
+
+
+ 

@@ -6,7 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-
+import { ButtonLoader } from "@/components/ui/ButtonLoader";
 
 
 import {
@@ -86,32 +86,48 @@ const SPORTS = [
   { name: "Chess", teamSize: "Individual", category: "Mind Sport", icon: "♟️" },
 ];
 
-const CHAMPIONS = [
-  {
-    name: "Thunder Hawks",
-    sport: "Cricket",
-    year: "2024",
-    image: "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Storm Riders",
-    sport: "Football",
-    year: "2024",
-    image: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Phoenix Fire",
-    sport: "Basketball",
-    year: "2024",
-    image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop",
-  },
-  {
-    name: "Velocity Vipers",
-    sport: "Athletics",
-    year: "2024",
-    image: "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=400&h=300&fit=crop",
-  },
-];
+const GC_CHAMPIONS = {
+  2025: [
+    {
+      position: "Winner",
+      name: "AI&DS COMRADES",
+      description: "Dominated with 12 gold medals across all sports categories",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/AI_DS_COMRADES_wqrupu.jpg",
+    },
+    {
+      position: "Runner Up",
+      name: "CIVILIANS",
+      description: "Strong performance in athletics and team sports",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/civil_sc5r8d.png",
+    },
+    {
+      position: "PowerHouse",
+      name: "RUDRASHAKTI MECHANICAL",
+      description: "Excellent showing in cricket and volleyball finals",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/Rudrashakti_Mechanical_xusziz.jpg",
+    },
+  ],
+  2024: [
+    {
+      position: "Winner",
+      name: "Thunder Hawks",
+      description: "Historic victory with record-breaking medal tally",
+      imageUrl: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=300&h=300&fit=crop",
+    },
+    {
+      position: "Runner Up",
+      name: "Storm Riders",
+      description: "Fierce competitors in basketball and football",
+      imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop",
+    },
+    {
+      position: "3rd Place",
+      name: "Phoenix Fire",
+      description: "Memorable performances in individual sports",
+      imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop",
+    },
+  ],
+};
 
 const SCHEDULE = [
   { day: "Day 1", date: "March 15", events: ["Opening Ceremony", "Cricket - Pool A", "Football - Pool A", "Chess - Round 1"] },
@@ -531,6 +547,8 @@ function CountdownTimer() {
 function HeroSection() {
   const { data: session } = useSession();
   const user = session?.user;
+  const router = useRouter();
+    const [buttonLoading, setButtonLoading] = useState(null);
 
   const fadeUpVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -544,6 +562,12 @@ function HeroSection() {
       },
     }),
   };
+
+  const handleButtonClick = (href, name) => {
+    setButtonLoading(name);
+    router.push(href);
+  };
+
 
   return (
     <section id="home" className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
@@ -645,37 +669,95 @@ function HeroSection() {
             className="flex justify-center mb-12"
           >
             <CountdownTimer />
-          </motion.div>
+           </motion.div>
 
-          <motion.div
-            custom={4}
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <a
-              href="#sports"
-              className="px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-semibold hover:from-orange-600 hover:to-red-700 transition-all animate-glow-pulse text-lg"
-            >
-              Explore Sports
-            </a>
-            {user ? (
-              <Link
-                href="/register"
-                className="px-8 py-4 bg-white/5 border border-white/20 text-white rounded-full font-semibold hover:bg-white/10 transition-all text-lg"
-              >
-                Register Now
-              </Link>
-            ) : (
-              <Link
-                href="/login"
-                className="px-8 py-4 bg-white/5 border border-white/20 text-white rounded-full font-semibold hover:bg-white/10 transition-all text-lg"
-              >
-                Login to Register
-              </Link>
-            )}
-          </motion.div>
+<motion.div
+                  custom={4}
+                  variants={fadeUpVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="flex flex-col sm:flex-row gap-4 justify-center"
+                >
+                  <motion.a
+                    href="#sports"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative px-8 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-semibold text-lg overflow-hidden"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-700"
+                      initial={{ x: "-100%" }}
+                      whileHover={{ x: "0%" }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      initial={{ x: "-100%" }}
+                      animate={{ x: "200%" }}
+                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                    />
+                    <span className="relative flex items-center justify-center gap-2">
+                      <motion.span
+                        animate={{ rotate: [0, 10, -10, 0] }}
+                        transition={{ duration: 0.5, repeat: Infinity, repeatDelay: 2 }}
+                      >
+                        🏆
+                      </motion.span>
+                      Explore Sports
+                    </span>
+                  </motion.a>
+                  {user ? (
+                  <motion.button
+                    onClick={() => handleButtonClick("/register", "heroRegister")}
+                    disabled={buttonLoading === "heroRegister"}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative px-8 py-4 bg-white/5 border border-white/20 text-white rounded-full font-semibold text-lg overflow-hidden disabled:opacity-80"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    <motion.span
+                      className="absolute inset-0 border-2 border-orange-500/0 rounded-full group-hover:border-orange-500/50 transition-all duration-300"
+                    />
+                    <span className="relative flex items-center justify-center gap-2">
+                      {buttonLoading === "heroRegister" && <ButtonLoader className="w-5 h-5" />}
+                      <motion.span
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        ⚡
+                      </motion.span>
+                      Register Now
+                    </span>
+                  </motion.button>
+                ) : (
+                  <motion.button
+                    onClick={() => handleButtonClick("/login", "heroLogin")}
+                    disabled={buttonLoading === "heroLogin"}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="group relative px-8 py-4 bg-white/5 border border-white/20 text-white rounded-full font-semibold text-lg overflow-hidden disabled:opacity-80"
+                  >
+                    <motion.span
+                      className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-red-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    />
+                    <motion.span
+                      className="absolute inset-0 border-2 border-orange-500/0 rounded-full group-hover:border-orange-500/50 transition-all duration-300"
+                    />
+                    <span className="relative flex items-center justify-center gap-2">
+                      {buttonLoading === "heroLogin" && <ButtonLoader className="w-5 h-5" />}
+                      <motion.span
+                        animate={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        🔐
+                      </motion.span>
+                      Login to Register
+                    </span>
+                  </motion.button>
+                )}
+              </motion.div>
         </div>
       </div>
 
@@ -692,6 +774,7 @@ function HeroSection() {
     </section>
   );
 }
+
 
 function JerseyBanner() {
 
@@ -1157,7 +1240,7 @@ const handleSubmit = async (e) => {
                     transition={{ delay: 1.5 }}
                     className="text-white/40 text-xs text-center mt-2"
                   >
-                    Save this code for jersey collection
+                    Save this code & Don't share with anyone! You will need it for games registration & jersey collection.
                   </motion.p>
                 </motion.div>
 
@@ -1389,11 +1472,11 @@ const handleSubmit = async (e) => {
                   type="number"
                   required
                   min="0"
-                  max="99"
+                  max="999"
                   value={formData.jerseyNo}
                   onChange={(e) => setFormData({ ...formData, jerseyNo: e.target.value })}
                  className="w-full px-3 py-2 md:py-2.5 bg-white/5 border border-white/10 rounded-lg text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-orange-500/50 transition-colors"
-                  placeholder="0-99"
+                  placeholder="0-999"
                 />
               </div>
             </div>
@@ -1513,68 +1596,141 @@ const handleSubmit = async (e) => {
   );
 }
 
+
 function GetJerseySection() {
+
+
+  const [formData, setFormData] = useState({
+    name: "",
+    phone:"",
+    jerseyName: "",
+    jerseyNo: "",
+    department: "",
+    size: "",
+  });
+
+
   const router = useRouter();
 
   // ✅ MOVE THESE TO TOP
   const { data: session } = useSession();
   const user = session?.user;
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [hasOrdered, setHasOrdered] = useState(null); // null = loading
+  const [orderStatus, setOrderStatus] = useState("loading");
   const [orderDetails, setOrderDetails] = useState(null);
 
-  // ✅ SAFE NOW
-  useEffect(() => {
-    if (!user?.email) {
-      setHasOrdered(false);
-      setOrderDetails(null);
-      return;
-    }
+  const [modalOpen, setModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-    const checkOrder = async () => {
-      try {
-        const res = await fetch(
-          `/api/jersey/status?email=${user.email}`
-        );
-        const data = await res.json();
 
-        setHasOrdered(data.ordered);
+
+const hasCheckedRef = useRef(false);
+
+useEffect(() => {
+  // reset when user changes
+  hasCheckedRef.current = false;
+  setOrderStatus("loading");
+  setOrderDetails(null);
+}, [user?.email]);
+
+
+
+useEffect(() => {
+  if (!user?.email) return;
+  if (hasCheckedRef.current) return;
+
+  hasCheckedRef.current = true;
+
+  const checkJerseyStatus = async () => {
+    try {
+      setOrderStatus("loading");
+
+      const res = await fetch(`/api/jersey/status?email=${user.email}`);
+      const data = await res.json();
+
+      if (data.ordered) {
         setOrderDetails(data.orderDetails);
-      } catch (err) {
-        console.error("Failed to check jersey status", err);
-        setHasOrdered(false);
+        setOrderStatus("ordered");
+      } else {
+        setOrderStatus("not_ordered");
       }
-    };
-
-    checkOrder();
-  }, [user]);
-
-  const handleOrderSuccess = (details) => {
-    setHasOrdered(true);
-    setOrderDetails(details);
-    setModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      setOrderStatus("not_ordered");
+    }
   };
 
-   const [copied, setCopied] = useState(false);
+  checkJerseyStatus();
+}, [user?.email]);
+
+
+
+
+useEffect(() => {
+  if (!modalOpen) return;
+
+  sessionStorage.setItem(
+    "jersey_form",
+    JSON.stringify(formData)
+  );
+}, [formData, modalOpen]);
+
+
+useEffect(() => {
+  if (orderStatus !== "not_ordered") return;
+
+  const saved = sessionStorage.getItem("jersey_form");
+  if (saved) {
+    setFormData(JSON.parse(saved));
+  }
+}, [orderStatus]);
+
+
+
+const handleOrderSuccess = (details) => {
+  setOrderDetails(details);
+  setOrderStatus("ordered");
+  setModalOpen(false);
+  sessionStorage.removeItem("jersey_form");
+};
+
+
 
   const handleCopyCode = () => {
     if (!orderDetails?.secretCode) return;
 
     navigator.clipboard.writeText(orderDetails.secretCode);
     setCopied(true);
-
     setTimeout(() => setCopied(false), 2000);
   };
 
   // ⏳ Optional loader
-  if (hasOrdered === null) return null;
+
+
+
 
   return (
   <>
-   {hasOrdered ? (
-      <section id="jersey" className="py-16 relative">
-        <div className="container mx-auto px-4 md:px-6">
+       {/* 🔄 LOADER (AFTER LOGIN, BEFORE STATUS KNOWN) */}
+      {orderStatus === "loading" && (
+          <section className="py-20 flex flex-col items-center justify-center gap-4">
+            <div className="w-10 h-10 border-4 border-orange-500/30 border-t-orange-500 rounded-full animate-spin" />
+            <p className="text-orange-400 text-sm tracking-wide">
+              Checking jersey status...
+            </p>
+          </section>
+        )}
+
+
+
+
+
+       {/* ✅ ORDERED SECTION */}
+      {orderStatus === "ordered" && (
+        <section id="jersey" className="py-16 relative">
+          
+
+          <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1748,69 +1904,79 @@ function GetJerseySection() {
             </motion.div>
           </motion.div>
         </div>
-      </section>
-    ) : (
-        /* ⬇️ KEEP YOUR EXISTING "Order Jersey" SECTION AS IS ⬇️ */
-    <>
-      <section id="jersey" className="py-16 relative">
-        <div className="container mx-auto px-4 md:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-r from-orange-500/10 via-red-500/10 to-orange-500/10 border border-orange-500/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M30%200L60%2030L30%2060L0%2030Z%22%20fill%3D%22rgba(255%2C255%2C255%2C0.02)%22%2F%3E%3C%2Fsvg%3E')]" />
-            
+
+
+        </section>
+      )}
+
+
+
+      {/* 🛒 NOT ORDERED SECTION */}
+      {orderStatus === "not_ordered" && (
+        <>
+          <section id="jersey" className="py-16 relative">
+           
+           
+            <div className="container mx-auto px-4 md:px-6">
             <motion.div
-              initial={{ scale: 0 }}
-              whileInView={{ scale: 1 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ type: "spring", delay: 0.2 }}
-              className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-12"
+              className="bg-gradient-to-r from-orange-500/10 via-red-500/10 to-orange-500/10 border border-orange-500/20 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden"
             >
-              <Shirt className="w-10 h-10 text-white -rotate-12" />
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M30%200L60%2030L30%2060L0%2030Z%22%20fill%3D%22rgba(255%2C255%2C255%2C0.02)%22%2F%3E%3C%2Fsvg%3E')]" />
+              
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", delay: 0.2 }}
+                className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 rotate-12"
+              >
+                <Shirt className="w-10 h-10 text-white -rotate-12" />
+              </motion.div>
+              
+              <h2 className="font-display text-3xl md:text-5xl text-white mb-4 relative">
+                GET YOUR OFFICIAL JERSEY
+              </h2>
+              <p className="text-white/50 max-w-xl mx-auto mb-8 relative">
+                Represent your team with pride. Order your official PARAKRAM 2026 jersey now and be part of the legacy.
+              </p>
+              
+              <motion.button
+                onClick={() => {
+                        if (!user) {
+                          toast.error("Please login to order jersey");
+                          router.push("/login");
+                          return;
+                        }
+                        setModalOpen(true);
+                  }}
+
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-semibold text-lg relative overflow-hidden group"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                <span className="relative flex items-center justify-center gap-3">
+                  <Shirt className="w-5 h-5" />
+                  Order Now - ₹799
+                </span>
+              </motion.button>
             </motion.div>
-            
-            <h2 className="font-display text-3xl md:text-5xl text-white mb-4 relative">
-              GET YOUR OFFICIAL JERSEY
-            </h2>
-            <p className="text-white/50 max-w-xl mx-auto mb-8 relative">
-              Represent your team with pride. Order your official PARAKRAM 2026 jersey now and be part of the legacy.
-            </p>
-            
-            <motion.button
-              onClick={() => {
-                      if (!user) {
-                        toast.error("Please login to order jersey");
-                        router.push("/login");
-                        return;
-                      }
-                      setModalOpen(true);
-                }}
+          </div>
 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-full font-semibold text-lg relative overflow-hidden group"
-            >
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-              <span className="relative flex items-center justify-center gap-3">
-                <Shirt className="w-5 h-5" />
-                Order Now - ₹799
-              </span>
-            </motion.button>
-          </motion.div>
-        </div>
-      </section>
 
-      <JerseyOrderModal
+
+          </section>
+
+          <JerseyOrderModal
             isOpen={modalOpen}
             onClose={() => setModalOpen(false)}
             onOrderSuccess={handleOrderSuccess}
           />
-
-    </>
-  )}
+        </>
+      )}
   </>
   );
 }
@@ -1873,7 +2039,7 @@ function AboutSection() {
           className="mt-16 relative rounded-3xl overflow-hidden"
         >
           <img
-            src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1200&h=500&fit=crop"
+            src="https://res.cloudinary.com/djoqcej0n/image/upload/v1768921780/pic_qdgbky.jpg"
             alt="Sports Arena"
             className="w-full h-64 md:h-96 object-cover"
           />
@@ -1887,6 +2053,29 @@ function AboutSection() {
             </p>
           </div>
         </motion.div>
+
+           <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-8 relative rounded-3xl overflow-hidden"
+          >
+            <img
+              src="https://slelguoygbfzlpylpxfs.supabase.co/storage/v1/render/image/public/project-uploads/c2219a10-407e-4854-b421-aa549fc1e840/tug-of-war-resized-1768923878416.jpg?width=8000&height=8000&resize=contain"
+              alt="Tug of War Battle"
+              className="w-full h-64 md:h-96 object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-8 text-right">
+              <h3 className="font-display text-2xl md:text-3xl text-white mb-2">
+                United We Pull, Together We Conquer
+              </h3>
+              <p className="text-white/60">
+                Raw strength, unbreakable bonds, and the roar of victory
+              </p>
+            </div>
+          </motion.div>
+
       </div>
     </section>
   );
@@ -1978,6 +2167,8 @@ const user = session?.user;
 }
 
 function ChampionsSection() {
+  const [activeYear, setActiveYear] = useState("2025");
+
   return (
     <section id="champions" className="py-24 relative">
       <div className="container mx-auto px-4 md:px-6">
@@ -1985,52 +2176,95 @@ function ChampionsSection() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-12"
         >
           <span className="text-orange-500 text-sm tracking-widest uppercase mb-4 block">
             Hall of Fame
           </span>
           <h2 className="font-display text-4xl md:text-6xl text-white mb-4">
-            DEFENDING CHAMPIONS
+            GENERAL CHAMPIONSHIP
           </h2>
           <p className="text-white/50 max-w-2xl mx-auto">
-            The titans who conquered last year. Can they defend their crowns,
-            or will new challengers rise?
+            Celebrating the top departments who dominated the overall championship standings
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {CHAMPIONS.map((champion, i) => (
+        <div className="flex justify-center gap-4 mb-12">
+          {["2025", "2024"].map((year) => (
+            <motion.button
+              key={year}
+              onClick={() => setActiveYear(year)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "px-8 py-3 rounded-full font-display text-lg transition-all",
+                activeYear === year
+                  ? "bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  : "bg-white/5 border border-white/20 text-white/70 hover:text-white hover:border-white/40"
+              )}
+            >
+              {year}
+            </motion.button>
+          ))}
+        </div>
+
+        <motion.div
+          key={activeYear}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto"
+        >
+          {GC_CHAMPIONS[activeYear].map((champion, i) => (
             <motion.div
               key={champion.name}
               initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              whileHover={{ y: -10 }}
-              className="group relative overflow-hidden rounded-2xl"
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ scale: 1.03, y: -5 }}
+              className={cn(
+                "group relative flex h-72 w-full flex-col justify-between overflow-hidden",
+                "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 text-white",
+                "cursor-default select-none"
+              )}
             >
-              <img
-                src={champion.image}
-                alt={champion.name}
-                className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-              <div className="absolute top-4 right-4">
-                <div className="px-3 py-1 bg-orange-500 rounded-full text-white text-xs font-medium">
-                  {champion.year}
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${
+                champion.position === "Winner" ? "from-yellow-500 to-amber-600" :
+                champion.position === "Runner Up" ? "from-gray-300 to-gray-500" :
+                "from-amber-600 to-orange-700"
+              }`} />
+              
+              <div className="z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">
+                    {champion.position === "Winner" ? "🥇" : champion.position === "Runner Up" ? "🥈" : "🥉"}
+                  </span>
+                  <span className={`text-xs font-semibold uppercase tracking-wider bg-gradient-to-r ${
+                    champion.position === "Winner" ? "from-yellow-500 to-amber-600" :
+                    champion.position === "Runner Up" ? "from-gray-300 to-gray-500" :
+                    "from-amber-600 to-orange-700"
+                  } bg-clip-text text-transparent`}>
+                    {champion.position}
+                  </span>
                 </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 p-6">
-                <Trophy className="w-6 h-6 text-yellow-500 mb-2" />
-                <h3 className="font-display text-xl text-white mb-1">
+                <h3 className="mb-2 font-display text-2xl font-medium tracking-tight text-white">
                   {champion.name}
                 </h3>
-                <p className="text-white/60 text-sm">{champion.sport}</p>
+                <p className="max-w-[85%] text-sm text-white/60">
+                  {champion.description}
+                </p>
+              </div>
+
+              <div className="absolute bottom-0 right-0 h-40 w-40 translate-x-4 translate-y-4 transform">
+                <img
+                  src={champion.imageUrl}
+                  alt={`${champion.name}`}
+                  className="h-full w-full rounded-full object-cover opacity-60 transition-all duration-300 ease-out group-hover:scale-110 group-hover:opacity-80"
+                />
               </div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -2142,10 +2376,18 @@ function ContactSection() {
 }
 
 function Footer() {
+  const policyLinks = [
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms & Conditions", href: "/terms-and-conditions" },
+    { label: "Refund Policy", href: "/refund-policy" },
+    { label: "Shipping Policy", href: "/shipping-policy" },
+    { label: "Contact Us", href: "/contact" },
+  ];
+
   return (
     <footer className="relative border-t border-white/10 py-12">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col items-center gap-8">
           <div className="font-display text-2xl text-white tracking-wider">
             PARAKRAM
           </div>
@@ -2160,6 +2402,19 @@ function Footer() {
               </a>
             ))}
           </nav>
+          <div className="w-full max-w-2xl border-t border-white/10 pt-6">
+            <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
+              {policyLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className="text-white/40 hover:text-orange-400 text-xs md:text-sm transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
           <p className="text-white/30 text-sm">
             © 2026 PARAKRAM. All rights reserved.
           </p>
