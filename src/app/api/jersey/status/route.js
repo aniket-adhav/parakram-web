@@ -3,17 +3,23 @@ import { connectDB } from "@/lib/mongodb";
 import JerseyOrder from "@/models/JerseyOrder";
 
 export async function GET(req) {
-  await connectDB();
-
-  const email = req.nextUrl.searchParams.get("email");
-  if (!email) {
-    return NextResponse.json({ ordered: false });
+  try {
+    await connectDB();
+  } catch (e) {
+    return NextResponse.json({ error: "DB down" }, { status: 500 });
   }
 
-  const order = await JerseyOrder.findOne({ email });
+  const { searchParams } = new URL(req.url);
+  const email = searchParams.get("email");
 
-  return NextResponse.json({
-    ordered: !!order,
-    orderDetails: order || null,
-  });
+  if (!email) {
+    return NextResponse.json(null);
+  }
+
+  const order = await JerseyOrder
+    .findOne({ email })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return NextResponse.json(order || null);
 }

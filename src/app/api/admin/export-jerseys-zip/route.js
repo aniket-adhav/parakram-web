@@ -9,7 +9,7 @@ export async function GET() {
     await connectDB();
 
     // ✅ Fetch all orders FIRST
-    const orders = await JerseyOrder.find({}).lean();
+    const orders = await JerseyOrder.find({status:"approved"}).lean();
 
     if (!orders.length) {
       return NextResponse.json(
@@ -41,9 +41,9 @@ export async function GET() {
         { header: "Jersey Name", key: "jerseyName", width: 15 },
         { header: "Jersey No", key: "jerseyNo", width: 10 },
         { header: "Size", key: "size", width: 10 },
+        {header: "Collar", key: "collar", width: 20},
         { header: "Secret Code", key: "secretCode", width: 18 },
         { header: "Department", key: "department", width: 20 },
-        { header: "Payment ID", key: "paymentId", width: 28 },
         { header: "Created At", key: "createdAt", width: 22 },
       ];
 
@@ -55,9 +55,9 @@ export async function GET() {
           jerseyName: o.jerseyName,
           jerseyNo: o.jerseyNo,
           size: o.size,
+          collar: o.collar,
           secretCode: o.secretCode,
           department: o.department,
-          paymentId: o.paymentId || "",
           createdAt: new Date(o.createdAt).toLocaleString(),
         });
       });

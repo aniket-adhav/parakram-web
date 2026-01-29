@@ -3,7 +3,6 @@ import Providers from "./providers";
 
 export const metadata = {
   title: "Parakram",
-  description: "Parakram Sports Event Website",
   icons: {
     icon: [
       { url: "/favicon.ico" },
