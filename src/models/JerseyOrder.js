@@ -50,6 +50,7 @@ const JerseyOrderSchema = new mongoose.Schema(
 
     secretCode: {
       type: String,
+      default: undefined,
       sparse: true, // ✅ THIS IS REQUIRED
       index: true,
     },

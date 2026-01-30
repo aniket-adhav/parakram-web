@@ -2,25 +2,32 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import JerseyOrder from "@/models/JerseyOrder";
 import { MASTER_ADMINS, DEPARTMENT_ADMINS } from "@/lib/admins";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 function generateSecretCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "PAR";
-
   for (let i = 0; i < 4; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-
   return code;
 }
 
-
 export async function POST(req) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const adminEmail = session.user.email.toLowerCase();
+
   await connectDB();
 
-  const { orderId, action, adminEmail } = await req.json();
+  const { orderId, action } = await req.json();
 
-  if (!orderId || !action || !adminEmail) {
+  if (!orderId || !action) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
@@ -29,7 +36,6 @@ export async function POST(req) {
     return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
-  // 🔐 Department restriction
   const adminDepartment = DEPARTMENT_ADMINS[adminEmail];
   const isMaster = MASTER_ADMINS.includes(adminEmail);
 
@@ -39,8 +45,10 @@ export async function POST(req) {
 
   // ✅ APPROVE
   if (action === "approved") {
+    if (!order.secretCode) {
+      order.secretCode = generateSecretCode(); // 🔥 ONLY ONCE
+    }
     order.status = "approved";
-    order.secretCode = generateSecretCode(); // 🔥 REQUIRED
     order.verifiedBy = adminEmail;
     order.verifiedAt = new Date();
   }
@@ -48,11 +56,12 @@ export async function POST(req) {
   // ❌ REJECT
   if (action === "rejected") {
     order.status = "rejected";
+    order.secretCode = undefined; // 🔥 CLEAR IT
     order.verifiedBy = adminEmail;
     order.verifiedAt = new Date();
   }
 
-  await order.save(); // 🔥 WILL NOT FAIL NOW
+  await order.save();
 
   return NextResponse.json({ success: true });
 }

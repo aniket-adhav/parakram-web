@@ -372,53 +372,6 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           </div>
                         </div>
 
-                            {/* <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <motion.div 
-                                whileHover={{ scale: 1.05, translateZ: 30 }}
-                                className="p-8 bg-gradient-to-br from-blue-600/20 to-indigo-600/20 border border-blue-400/40 rounded-[2.5rem] text-left space-y-4 backdrop-blur-xl group transition-all hover:from-blue-500/30 hover:to-indigo-500/30 hover:border-blue-300/60 shadow-[0_0_50px_rgba(59,130,246,0.2)] hover:shadow-[0_0_80px_rgba(59,130,246,0.3)] relative overflow-hidden"
-                              >
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 blur-3xl rounded-full -mr-16 -mt-16" />
-                                <div className="flex items-center justify-between relative z-10">
-                                  <div className="flex items-center gap-2">
-                                    <User className="w-4 h-4 text-blue-400" />
-                                    <p className="text-[10px] font-black text-blue-400/80 uppercase tracking-widest">Athlete Profile</p>
-                                  </div>
-                                  <div className="px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full">
-                                    <p className="text-[8px] font-black text-blue-400 uppercase tracking-tighter">Status: Pending</p>
-                                  </div>
-                                </div>
-                                <div className="space-y-1 relative z-10">
-                                  <p className="text-white text-3xl font-black uppercase tracking-tight italic leading-none truncate">
-                                    {order?.name || "LOCKED"}
-                                  </p>
-                                  <div className="flex items-center gap-2 pt-1">
-                                    <p className="text-[10px] font-bold text-blue-400/60 uppercase">Protocol ID:</p>
-                                    <p className="text-white/60 text-xs font-mono tracking-widest">#{order?.secretCode || "LOCKED"}</p>
-                                  </div>
-                                </div>
-                                <button 
-                                  onClick={handleCopyCode} 
-                                  className="absolute bottom-4 right-4 text-blue-400/40 hover:text-blue-400 transition-colors p-2 hover:bg-blue-500/10 rounded-lg z-20"
-                                >
-                                  {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                                </button>
-                              </motion.div>
-                              
-                              <motion.div 
-                                whileHover={{ scale: 1.05, translateZ: 30 }}
-                                className="p-8 bg-blue-950/30 border border-blue-500/30 rounded-[2.5rem] text-left space-y-4 backdrop-blur-xl group transition-all hover:bg-blue-900/40 hover:border-blue-400/50 shadow-[0_0_40px_rgba(59,130,246,0.1)] hover:shadow-[0_0_60px_rgba(59,130,246,0.2)]"
-                              >
-
-                              <div className="flex items-center gap-2">
-                                <Shirt className="w-4 h-4 text-blue-400" />
-                                <p className="text-[10px] font-black text-blue-400/60 uppercase tracking-widest">Assigned Gear</p>
-                              </div>
-                              <p className="text-white text-2xl font-black uppercase tracking-tight truncate italic">
-                                {order?.jerseyName} <span className="text-blue-500">—</span> {order?.size}
-                              </p>
-                            </motion.div>
-                          </div> */}
-
                         <div className="flex flex-col items-center gap-4 pt-4">
                           <div className="flex -space-x-3">
                             {[1, 2, 3, 4].map((i) => (

@@ -2,32 +2,35 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { MASTER_ADMINS, DEPARTMENT_ADMINS, ADMIN_EMAILS } from "@/lib/admins";
 import JerseyOrder from "@/models/JerseyOrder";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(req) {
-  const email = req.headers.get("x-admin-email")?.toLowerCase().trim();
-  const { searchParams } = new URL(req.url);
-  const status = searchParams.get("status");
+  const session = await getServerSession(authOptions);
 
-  // 🔒 Block non-admins
-  if (!email || !ADMIN_EMAILS.includes(email)) {
+  if (!session?.user?.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const email = session.user.email.toLowerCase();
+  if (!ADMIN_EMAILS.includes(email)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get("status");
 
   await connectDB();
 
   const query = {};
 
-  // 🟢 STATUS FILTER
   if (status && status !== "all") {
     query.status = status;
   }
 
-  // 🟢 MASTER ADMIN → see all
   if (MASTER_ADMINS.includes(email)) {
-    // no department filter
-  }
-  // 🔴 DEPARTMENT ADMIN → restricted
-  else if (DEPARTMENT_ADMINS[email]) {
+    // full access
+  } else if (DEPARTMENT_ADMINS[email]) {
     query.department = DEPARTMENT_ADMINS[email];
   }
 
