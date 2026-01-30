@@ -113,7 +113,13 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
   return (
    <section
   id="jersey"
-  className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+  className="
+  min-h-screen flex justify-center relative overflow-hidden
+  items-start p-4 pt-20
+  md:items-center md:p-6
+"
+>
+
       {/* Dynamic Background */}
       {/* <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full mix-blend-screen animate-pulse" />
@@ -131,7 +137,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                   exit={{ opacity: 0, y: -30 }}
                   className="max-w-6xl mx-auto"
                 >
-                  <div className="grid lg:grid-cols-2 gap-16 items-center">
+                  <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16 items-center">
                     <div className="space-y-12">
                       <div className="space-y-6">
                         <motion.div 
@@ -144,7 +150,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Phase 01: Activation</span>
                         </motion.div>
                         
-                        <h2 className="text-7xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.85] uppercase">
+                        <h2 className="text-5xl sm:text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.85] uppercase">
                           GET YOUR <br />
                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-red-600">OFFICIAL</span> <br />
                           JERSEY
@@ -169,7 +175,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                               }
                               setModalOpen(true);
                             }}
-                            className="group relative px-12 py-6 bg-white rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95"
+                            className="group w-full px-6 py-4 rounded-2xl sm:w-auto sm:px-8 sm:py-5 md:px-12 md:py-6 md:rounded-full"
                           >
                           <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity" />
                           <span className="relative z-10 flex items-center justify-center gap-4 text-black group-hover:text-white font-black text-xl tracking-tight">
@@ -178,7 +184,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           </span>
                         </button>
                         
-                        <div className="flex items-center gap-5 px-8 py-6 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
+                        <div className="flex items-center gap-5 px-5 py-4 rounded-2xl md:px-8 md:py-6 md:rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
                           <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
                             <Zap className="w-6 h-6 text-orange-500" />
                           </div>
@@ -191,7 +197,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                     </div>
 
                 <div className="relative perspective-2000 flex items-center justify-center">
-                    <CometCard2 className="w-full max-w-2xl rounded-[4rem]" rotateDepth={35} translateDepth={25}>
+                    <CometCard2 className="w-full max-w-md rounded-[2.5rem] lg:max-w-2xl lg:rounded-[4rem]" rotateDepth={35} translateDepth={25}>
 
                     <motion.div
                       animate={{ y: [0, -14, 0] }}
@@ -204,7 +210,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                         "relative z-20 aspect-[4/5]",
                         "bg-gradient-to-b from-white/10 to-white/5",
                         "border border-white/20",
-                        "rounded-[4rem] p-16 overflow-hidden",
+                        "rounded-[4rem] p-8 md:p-16 overflow-hidden",
                         "backdrop-blur-sm group transform-style-3d"
                       )}
                     >
@@ -398,7 +404,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
               key="success"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="max-w-5xl mx-auto w-full"
+              className="max-w-5xl mx-auto w-full px-2 sm:px-4 md:px-0"
             >
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/20 via-orange-500/20 to-blue-500/20 rounded-[4rem] blur-3xl opacity-50 animate-pulse" />
@@ -512,7 +518,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                               {order.secretCode?.split("").map((char, i) => (
                                 <div
                                   key={i}
-                                  className="w-10 h-12 md:w-12 md:h-14 bg-black/60 border border-white/10
+                                  className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 bg-black/60 border border-white/10
                                   rounded-xl flex items-center justify-center"
                                 >
                                   <span className="text-2xl md:text-3xl font-black text-white tracking-widest">
@@ -568,7 +574,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
               key="failed"
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="max-w-xl mx-auto"
+              className="max-w-xl mx-auto px-2 sm:px-4 md:px-0"
             >
               <div className="bg-[#1a0505] border border-red-500/30 rounded-[3rem] p-12 md:p-16 text-center space-y-10 relative overflow-hidden shadow-[0_0_100px_rgba(220,38,38,0.2)]">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.1)_0%,transparent_70%)]" />
