@@ -150,7 +150,13 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           <span className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Phase 01: Activation</span>
                         </motion.div>
                         
-                        <h2 className="text-5xl sm:text-6xl md:text-[10rem] font-black text-white tracking-tighter leading-[0.85] uppercase">
+                        <h2 className="
+                          text-6xl
+                          sm:text-6xl
+                          md:text-[10rem]
+                          font-black text-white tracking-tighter leading-[0.85] uppercase
+                        ">
+
                           GET YOUR <br />
                           <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-red-600">OFFICIAL</span> <br />
                           JERSEY
@@ -221,7 +227,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                       </div>
                     </div>
 
-                <div className="relative perspective-2000 flex items-center justify-center">
+                <div className="relative perspective-2000 hidden lg:flex items-center justify-center">
                     <CometCard2
                         className="
                           w-full
