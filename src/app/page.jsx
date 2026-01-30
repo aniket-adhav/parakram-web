@@ -655,7 +655,7 @@ function CountdownTimer() {
     setMounted(true);
 
     // 🔥 FIXED EVENT DATE (2 March 2026, 9:00 AM IST)
-    const eventDate = new Date("2026-03-02T09:00:00+05:30");
+    const eventDate = new Date("2026-02-21T09:00:00+05:30");
 
     const updateTimer = () => {
       const now = new Date();
