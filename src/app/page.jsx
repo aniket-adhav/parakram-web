@@ -14,6 +14,8 @@ import { CometCard } from "../components/ui/comet-card";
 import { ElegantShape } from "@/components/ui/shape-landing-hero";
 import { cn } from "@/lib/utils";
 import SplashLoader from "@/components/SplashLoader";
+import AdminRedirectLoader from "@/components/AdminRedirectLoader";
+
 
 // ⬇️ Load new jersey section (client-only, heavy animations)
 const JerseySection = dynamic(
@@ -53,29 +55,40 @@ export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [showSplash, setShowSplash] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
+
 
   // ✅ ALWAYS CALL HOOKS FIRST
-  useEffect(() => {
-    // splash logic
-    const hasVisited = sessionStorage.getItem("parakram_loaded");
-    if (!hasVisited) {
-      setShowSplash(true);
-    }
+ useEffect(() => {
+  if (status === "loading") return;
 
-    // admin redirect logic
-    const email = normalizeEmail(session?.user?.email);
-    if (email && ADMIN_EMAILS.includes(email)) {
-      router.replace("/admin");
-    }
-  }, [session, router]);
+  const email = normalizeEmail(session?.user?.email);
 
-  // ⛔️ now safe to return conditionally
-  if (status === "loading") return null;
+  // 🔐 ADMIN → show admin redirect loader
+  if (email && ADMIN_EMAILS.includes(email)) {
+    setRedirecting(true);
+    router.replace("/admin");
+    return;
+  }
+
+  // 🌊 existing splash logic (UNCHANGED)
+  const hasVisited = sessionStorage.getItem("parakram_loaded");
+  if (!hasVisited) {
+    setShowSplash(true);
+  }
+}, [status, session, router]);
+
 
   const handleSplashComplete = () => {
     sessionStorage.setItem("parakram_loaded", "true");
     setShowSplash(false);
   };
+  if (redirecting) {
+  return <AdminRedirectLoader />;
+}
+
+if (status === "loading") return null;
+
 
   return (
     <main className="min-h-screen relative">
@@ -235,7 +248,7 @@ const GC_CHAMPIONS = {
       position: "Winner",
       name: "AI&DS COMRADES",
       description: "Dominated across all sports categories",
-      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/AI_DS_COMRADES_wqrupu.jpg",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1769758387/aidslogo_q85xse.jpg",
     },
     {
       position: "Runner Up",
@@ -247,7 +260,7 @@ const GC_CHAMPIONS = {
       position: "PowerHouse",
       name: "RUDRASHAKTI MECHANICAL",
       description: "Strong fan support throughout the event",
-      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/Rudrashakti_Mechanical_xusziz.jpg",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1769758399/Mech_cedyq1.png",
     },
   ],
   2024: [
@@ -267,7 +280,7 @@ const GC_CHAMPIONS = {
       position: "3rd Place",
       name: "AI&DS COMRADES",
       description: "Delivered notable performances, especially in individual sporting events",
-      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1768922243/AI_DS_COMRADES_wqrupu.jpg",
+      imageUrl: "https://res.cloudinary.com/djoqcej0n/image/upload/v1769758387/aidslogo_q85xse.jpg",
     },
   ],
 };
@@ -1038,10 +1051,10 @@ function JerseyBanner() {
 
 function AboutSection() {
   const stats = [
-    { icon: Users, value: "2000+", label: "Athletes" },
-    { icon: Trophy, value: "8", label: "Sports" },
+    { icon: Users, value: "1000+", label: "Athletes" },
+    { icon: Trophy, value: "11", label: "Sports" },
     { icon: Calendar, value: "4", label: "Days" },
-    { icon: Medal, value: "50+", label: "Medals" },
+    { icon: Medal, value: "3", label: "Winners" },
   ];
 
   return (
@@ -1071,7 +1084,18 @@ function AboutSection() {
                   <p>
                     <span className="text-orange-500 font-bold">Parakram</span> is the <span className="text-white font-semibold">flagship inter-departmental sports festival</span> of <span className="text-white font-bold">DYPIT, Pimpri</span>. 
                     It is a celebration of <span className="text-orange-400 italic font-medium">athleticism</span>, <span className="text-orange-400 italic font-medium">sportsmanship</span>, and the <span className="text-orange-400 italic font-medium">relentless pursuit of excellence</span>. 
-                    Every year, over <span className="text-white font-bold underline decoration-orange-500/50 underline-offset-4">2000 athletes</span> compete across various sports to claim the <span className="text-orange-500 font-bold">ultimate glory</span> for their departments.
+                    Every year, over <span className="text-white font-bold underline decoration-orange-500/50 underline-offset-4">1000 athletes</span> compete across various sports to claim the <span className="text-orange-500 font-bold">ultimate glory</span> for their departments.
+                    
+                    <br /><br />
+
+                    Alongside the intense competition, <span className="text-white font-semibold">Parakram</span> awards 
+                    <span className="text-orange-400 font-semibold"> two major titles</span> — the 
+                    <span className="text-white font-semibold">  General Championship Winner</span> and 
+                    <span className="text-white font-semibold">  Runner-Up</span>.  
+                    Additionally, the prestigious 
+                    <span className="text-orange-500 font-bold"> Powerhouse Trophy</span> is awarded to the department with the 
+                    <span className="text-white font-semibold">  highest jersey participation</span> and 
+                    <span className="text-white font-semibold">  maximum student support</span>, celebrating unity beyond the field.
                   </p>
               </div>
 
@@ -1691,8 +1715,8 @@ function ScheduleSection() {
 function ContactSection() {
   const TEAM_MEMBERS = [
     { name: "Aniket Adhav", post: "Technical Head", phone: "+91 96573 25070" },
-    { name: "Pranav Kale", post: "Coordinator", phone: "+91 93562 50857" },
     { name: "Kartik Gaikwad", post: "Co-coordinator", phone: "+91 70289 38880" },
+    { name: "Ajay Nikam", post: "Co-coordinator", phone: "+91 96074 43111" },
   ];
 
   return (

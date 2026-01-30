@@ -3,17 +3,21 @@ import { connectDB } from "@/lib/mongodb";
 import JerseyOrder from "@/models/JerseyOrder";
 import ExcelJS from "exceljs";
 import JSZip from "jszip";
+export const dynamic = "force-dynamic";
+
 
 export async function GET() {
   try {
     await connectDB();
 
-    // ✅ Fetch all orders FIRST
-    const orders = await JerseyOrder.find({status:"approved"}).lean();
+    // ✅ ONLY APPROVED ORDERS
+    const orders = await JerseyOrder.find({
+      status: "approved",
+    }).lean();
 
     if (!orders.length) {
       return NextResponse.json(
-        { message: "No orders found" },
+        { message: "No approved orders found" },
         { status: 404 }
       );
     }

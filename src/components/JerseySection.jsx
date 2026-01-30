@@ -5,13 +5,16 @@ import { cn } from "@/lib/utils";
 import { 
 Shirt, ArrowRight, CheckCircle, Clock, AlertTriangle, 
 Copy, Zap, ShieldCheck, QrCode, CreditCard, Check, Box, Truck, Trophy, Medal,
-ChevronRight, Sparkles, Receipt, ExternalLink, Cpu, Activity, Fingerprint, Lock, Ticket, MapPin, Calendar, Shield, Mail,User
+ChevronRight, Sparkles, Receipt, ExternalLink, Cpu, Activity, Fingerprint, Lock, Ticket, MapPin, Calendar, Shield, Mail,User, X, Info
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import JerseyOrderFlow from "@/components/JerseyOrderFlow";
 import { MASTER_ADMINS } from "@/lib/admins"
 import { CometCard2 } from "@/components/ui/comet-card2";
+const DEMO_JERSEY_URL =
+  "https://res.cloudinary.com/djoqcej0n/image/upload/v1769753360/demo_mrmnhs.jpg";
+
 
 
 export default function JerseySection() {
@@ -33,6 +36,8 @@ const [order, setOrder] = useState(null);
 const [loading, setLoading] = useState(true);
 const [modalOpen, setModalOpen] = useState(false);
 const [copied, setCopied] = useState(false);
+const [showSizeChart, setShowSizeChart] = useState(false);
+
 
 
 const isSessionLoading = status === "loading";
@@ -224,6 +229,33 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                             <p className="text-white text-2xl font-black">₹360</p>
                           </div>
                         </div>
+                        {/* MOBILE PREVIEW BUTTON */}
+                     <button
+                        onClick={() => setShowSizeChart(true)}
+                        className="
+                          md:hidden
+                          w-full
+                          flex items-center justify-center gap-2
+                          py-4
+                          rounded-2xl
+                          bg-orange-500/10
+                          border border-orange-500/30
+                          text-xs
+                          font-black
+                          uppercase
+                          tracking-[0.25em]
+                          text-orange-400
+                          hover:bg-orange-500
+                          hover:text-white
+                          transition-all
+                        "
+                      >
+                        Jersey Preview 
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+
+
+
                       </div>
                     </div>
 
@@ -263,12 +295,30 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center">
                             <Shirt className="w-8 h-8 text-black" />
                           </div>
-                          <div className="text-right">
-                            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">
-                              Material
-                            </p>
-                            <p className="text-white font-bold">Aero-Dry Mesh</p>
-                          </div>
+                        <button
+                          onClick={() => setShowSizeChart(true)}
+                          className="
+                            relative z-30 pointer-events-auto
+                            flex items-center gap-2
+                            px-4 py-2
+                            rounded-full
+                            bg-orange-500/10
+                            border border-orange-500/30
+                            text-[11px]
+                            font-black
+                            uppercase
+                            tracking-widest
+                            text-orange-400
+                            hover:bg-orange-500
+                            hover:text-white
+                            transition-all
+                          "
+                        >
+              Jersey Preview 
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+
                         </div>
 
                         <div className="relative flex items-center justify-center">
@@ -477,9 +527,27 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                       </div>
 
                       {/* Jersey Mockup Card */}
-                      <div className="relative group/jersey w-full max-w-md mx-auto lg:mx-0">
+                     <div className="
+                        relative group/jersey
+                        w-full
+                        max-w-[92vw]
+                        sm:max-w-md
+                        mx-auto
+                        lg:mx-0
+                      ">
+
                         <div className="absolute -inset-1 bg-gradient-to-br from-orange-500/20 to-transparent rounded-[2.5rem] blur opacity-50" />
-                        <div className="relative bg-gradient-to-br from-zinc-900 via-zinc-950 to-black border border-white/10 rounded-[2.5rem] p-8 overflow-hidden aspect-[4/3] flex flex-col justify-between">
+                        <div className="
+                          relative
+                          bg-gradient-to-br from-zinc-900 via-zinc-950 to-black
+                          border border-white/10
+                          rounded-[2rem] sm:rounded-[2.5rem]
+                          p-5 sm:p-8
+                          overflow-hidden
+                          aspect-[4/3]
+                          flex flex-col justify-between
+                        ">
+
                           {/* Background Texture */}
                           <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex items-center justify-center">
                             <Shirt className="w-[120%] h-[120%] text-white rotate-12" />
@@ -663,6 +731,71 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
         onClose={() => setModalOpen(false)} 
         onComplete={fetchOrder} 
       />
+      <AnimatePresence>
+        {showSizeChart && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+            onClick={() => setShowSizeChart(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-sm bg-zinc-950 border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 space-y-6">
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-black text-white uppercase italic">
+                      Jersey Preview
+                    </h3>
+                    <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                      Pattern & Design Reference
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowSizeChart(false)}
+                    className="p-2 hover:bg-white/5 rounded-full"
+                  >
+                    <X className="w-4 h-4 text-zinc-500" />
+                  </button>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                  <img
+                    src={DEMO_JERSEY_URL}
+                    alt="Jersey Preview"
+                    className="w-full h-auto object-contain"
+                  />
+                </div>
+
+                <div className="flex gap-3 p-4 bg-orange-500/5 border border-orange-500/20 rounded-xl">
+                  <Info className="w-4 h-4 text-orange-500 mt-0.5" />
+                  <p className="text-[9px] text-zinc-400 leading-relaxed">
+                    This is the <span className="text-white font-semibold">pattern and design</span> of the jersey.
+                    Colors and other department-specific details will be shared on
+                    <span className="text-white font-semibold"> WhatsApp groups</span>.
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setShowSizeChart(false)}
+                  className="w-full py-4 bg-white text-black rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:bg-orange-500 hover:text-white transition-all"
+                >
+                  CLOSE
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </section>
+    
   );
 }
