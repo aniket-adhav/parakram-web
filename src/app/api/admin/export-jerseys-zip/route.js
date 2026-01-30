@@ -48,6 +48,7 @@ export async function GET() {
         {header: "Collar", key: "collar", width: 20},
         { header: "Secret Code", key: "secretCode", width: 18 },
         { header: "Department", key: "department", width: 20 },
+        { header: "Payment Status", key: "paymentStatus", width: 20 },
         { header: "Created At", key: "createdAt", width: 22 },
       ];
 
@@ -62,9 +63,25 @@ export async function GET() {
           collar: o.collar,
           secretCode: o.secretCode,
           department: o.department,
+           paymentStatus: o.status.toUpperCase(),
           createdAt: new Date(o.createdAt).toLocaleString(),
         });
       });
+
+      sheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 1) return; // skip header
+
+        const cell = row.getCell("secretCode");
+
+        if (cell.value) {
+          cell.font = {
+            bold: true,
+            color: { argb: "FFF97316" }, // 🔥 orange
+          };
+        }
+      });
+
+
 
       // ✅ IMPORTANT: fully resolve Excel
       const excelBuffer = await workbook.xlsx.writeBuffer();
