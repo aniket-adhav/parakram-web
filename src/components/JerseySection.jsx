@@ -168,21 +168,46 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
 
                       <div className="flex flex-col sm:flex-row items-stretch gap-6">
                        <button
-                            onClick={() => {
-                              if (!session) {
-                                toast.error("Please login first to order a jersey");
-                                return;
-                              }
-                              setModalOpen(true);
-                            }}
-                            className="group w-full px-6 py-4 rounded-2xl sm:w-auto sm:px-8 sm:py-5 md:px-12 md:py-6 md:rounded-full"
-                          >
-                          <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <span className="relative z-10 flex items-center justify-center gap-4 text-black group-hover:text-white font-black text-xl tracking-tight">
+                          onClick={() => {
+                            if (!session) {
+                              toast.error("Please login first to order a jersey");
+                              return;
+                            }
+                            setModalOpen(true);
+                          }}
+                          className="
+                            group relative overflow-hidden
+                            bg-white
+                            w-full sm:w-auto
+                            px-6 py-4
+                            sm:px-8 sm:py-5
+                            md:px-12 md:py-6
+                            rounded-2xl md:rounded-full
+                            transition-all
+                            hover:scale-105 active:scale-95
+                          "
+                        >
+                          {/* hover gradient — ONLY shows on hover */}
+                          <div className="
+                            absolute inset-0
+                            bg-gradient-to-r from-orange-500 to-red-600
+                            opacity-0 group-hover:opacity-100
+                            transition-opacity
+                          " />
+
+                          {/* content */}
+                          <span className="
+                            relative z-10
+                            flex items-center justify-center gap-4
+                            text-black group-hover:text-white
+                            font-black text-base sm:text-lg md:text-xl
+                            tracking-tight
+                          ">
                             ORDER YOUR JERSEY NOW
-                            <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform" />
                           </span>
                         </button>
+
                         
                         <div className="flex items-center gap-5 px-5 py-4 rounded-2xl md:px-8 md:py-6 md:rounded-full bg-white/5 border border-white/10 backdrop-blur-xl">
                           <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
@@ -197,7 +222,18 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                     </div>
 
                 <div className="relative perspective-2000 flex items-center justify-center">
-                    <CometCard2 className="w-full max-w-md rounded-[2.5rem] lg:max-w-2xl lg:rounded-[4rem]" rotateDepth={35} translateDepth={25}>
+                    <CometCard2
+                        className="
+                          w-full
+                          max-w-[90vw]
+                          sm:max-w-md
+                          lg:max-w-2xl
+                          rounded-[2.5rem] lg:rounded-[4rem]
+                        "
+                        rotateDepth={35}
+                        translateDepth={25}
+                      >
+
 
                     <motion.div
                       animate={{ y: [0, -14, 0] }}
