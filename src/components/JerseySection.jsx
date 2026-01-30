@@ -556,7 +556,14 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                           <div className="flex justify-between items-start relative z-10">
                             <div className="space-y-1">
                               <p className="text-orange-500 text-[10px] font-black uppercase tracking-[0.3em]">Official Gear</p>
-                              <p className="text-white text-4xl font-black tracking-tighter uppercase italic leading-none">{order.jerseyName}</p>
+                              <p className="
+                                text-white
+                                text-2xl sm:text-3xl md:text-4xl
+                                font-black tracking-tighter uppercase italic leading-none
+                              ">
+                                {order.jerseyName}
+                              </p>
+
                             </div>
                             <div className="text-right">
                               <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-1">Size</p>
@@ -575,13 +582,23 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                               <motion.p 
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 0.15 }}
-                                className="text-[12rem] font-black text-white leading-none absolute -bottom-12 -right-4 italic"
+                                className="
+                                          text-[6rem] sm:text-[8rem] md:text-[12rem]
+                                          font-black text-white leading-none
+                                          absolute -bottom-6 sm:-bottom-10 md:-bottom-12
+                                          -right-2 sm:-right-4
+                                          italic
+                                        "
                               >
                                 {order.jerseyNo}
                               </motion.p>
-                              <p className="text-8xl md:text-9xl font-black text-white leading-none relative z-10 italic drop-shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-                                {order.jerseyNo}
-                              </p>
+                              <p className="
+                                          text-6xl sm:text-7xl md:text-9xl
+                                          font-black text-white leading-none relative z-10 italic
+                                        ">
+                                          {order.jerseyNo}
+                                        </p>
+
                             </div>
                           </div>
                         </div>
@@ -626,15 +643,25 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                             
                             <div className="flex justify-center gap-2 mb-4">
                               {order.secretCode?.split("").map((char, i) => (
-                                <div
-                                  key={i}
-                                  className="w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14 bg-black/60 border border-white/10
-                                  rounded-xl flex items-center justify-center"
-                                >
-                                  <span className="text-2xl md:text-3xl font-black text-white tracking-widest">
-                                    {char}
-                                  </span>
-                                </div>
+                             <div
+                              key={i}
+                              className="
+                                w-8 h-10 sm:w-10 sm:h-12 md:w-12 md:h-14
+                                rounded-xl
+                                flex items-center justify-center
+                                border border-emerald-400/30
+                                bg-gradient-to-br from-emerald-500/35 to-emerald-600/15
+                                backdrop-blur-md
+                                shadow-[0_0_18px_rgba(16,185,129,0.35)]
+                              "
+                            >
+                              <span className="text-2xl md:text-3xl font-black text-white tracking-widest drop-shadow">
+                                {char}
+                              </span>
+                            </div>
+
+
+
                               ))}
                             </div>
 

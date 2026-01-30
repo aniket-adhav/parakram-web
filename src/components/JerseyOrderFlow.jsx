@@ -31,7 +31,7 @@ const DEPARTMENTS = [
 
 const DEPARTMENT_QRS = [
   { name: "Computer", upi: "avisabale7230-1@okaxis", qr: "/qr/Comp.jpeg" },
-  { name: "AIDS", upi: "vaishnavibabar0918-2@okaxis", qr: "/qr/aids2.jpeg" },
+  { name: "AIDS", upi: "vaishnavibabar0918-2@okaxis", qr: "/qr/AIDS.jpeg" },
   { name: "Electrical", upi: "nikhilmutha890@okaxis", qr: "/qr/Electrical.jpeg" },
   { name: "Civil", upi: "gaikwadshivam2004@oksbi", qr: "/qr/Civil.jpeg" },
   { name: "Mechanical", upi: "yashkudale12-2@okhdfcbank", qr: "/qr/Mech.jpeg" },
@@ -209,19 +209,17 @@ const handleSubmit = async () => {
                   <div className="space-y-1.5">
                     <label className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] ml-1">Full Name</label>
                     <input 
-                     
-                    className="
-                      w-full bg-white/5 border border-white/10
-                      rounded-lg px-3 py-2 text-xs
-                      md:rounded-xl md:px-4 md:py-3 md:text-sm
-                      text-white focus:outline-none focus:border-orange-500/50
-                      transition-all placeholder:text-white/10 font-medium
-                    "
-                    placeholder="Warrior Name"
-
+                      className="
+                        w-full bg-white/5 border border-white/10
+                        rounded-xl px-4 py-3 text-sm
+                        text-white focus:outline-none focus:border-orange-500/50
+                        transition-all placeholder:text-white/10 font-medium
+                      "
+                      placeholder="Name"
                       value={formData.name}
-                      onChange={e => setFormData({...formData, name: e.target.value})}
+                      onChange={e => setFormData({ ...formData, name: e.target.value })}
                     />
+
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] ml-1">Phone</label>
@@ -240,7 +238,7 @@ const handleSubmit = async () => {
                     <label className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] ml-1">Jersey Name</label>
                     <input 
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-white/10 uppercase font-black tracking-widest"
-                      placeholder="ANIKET"
+                      placeholder="PATIL"
                       maxLength={12}
                       value={formData.jerseyName}
                       onChange={e => setFormData({...formData, jerseyName: e.target.value.toUpperCase()})}
@@ -462,98 +460,133 @@ const handleSubmit = async () => {
             </motion.div>
           )}
 
-            {step === 3 && (
-              <motion.div 
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
+        {step === 3 && (
+          <motion.div
+            key="step3"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-4 sm:space-y-6"
+          >
+            {/* Header */}
+            <div className="text-center space-y-1.5">
+              <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-2 border border-blue-500/20">
+                <QrCode className="w-7 h-7 text-blue-500" />
+              </div>
+
+              <h2 className="font-display text-xl sm:text-2xl md:text-3xl text-white">
+                FUEL THE FLAME
+              </h2>
+
+              <p className="text-white/40 text-[11px] sm:text-xs font-medium">
+                Complete ₹360 transaction via Secure UPI
+              </p>
+            </div>
+
+            {/* QR Section */}
+            <div className="flex flex-col items-center space-y-3 sm:space-y-5">
+
+              {/* Department Title */}
+              <div className="text-center -mb-1 sm:mb-0">
+                <p className="text-[9px] sm:text-[11px] font-black uppercase tracking-[0.35em] sm:tracking-[0.45em] text-orange-500">
+                  {formData.department} Department
+                </p>
+              </div>
+
+              {/* QR Card */}
+              <div className="relative">
+                <div className="absolute inset-0 rounded-[2.2rem] bg-white/30 blur-2xl opacity-30" />
+
+                <div
+                  className="
+                    relative
+                    w-52 h-52
+                    sm:w-60 sm:h-60
+                    md:w-72 md:h-72
+                    bg-white
+                    rounded-[2.2rem]
+                    shadow-2xl
+                    border-[6px] border-black
+                    overflow-hidden
+                    flex items-center justify-center
+                  "
+                >
+                  <img
+                    src={selectedPayment.qr}
+                    alt={`${selectedPayment.name} QR`}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+
+              {/* UPI COPY */}
+              <div className="w-full space-y-2.5">
+                <button
+                  onClick={() => {
+                    if (!selectedPayment) return;
+
+                    navigator.clipboard.writeText(selectedPayment.upi);
+                    setCopied(true);
+                    toast.success(`${formData.department} UPI ID copied`);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className={cn(
+                    "w-full border rounded-xl p-4 text-center group transition-all active:scale-95",
+                    copied
+                      ? "bg-emerald-500/10 border-emerald-500/30"
+                      : "bg-white/5 border-white/10 hover:bg-white/10"
+                  )}
+                >
+                  <p className="text-[8px] uppercase font-black tracking-widest mb-0.5 text-white/30">
+                    Direct Transfer ID
+                  </p>
+
+                  <div
+                    className={cn(
+                      "flex items-center justify-center gap-2 transition-all",
+                      copied ? "text-emerald-400" : "text-orange-400"
+                    )}
+                  >
+                    <p className="text-base font-mono font-black tracking-wider">
+                      {selectedPayment?.upi || "Select department first"}
+                    </p>
+
+                    {copied ? (
+                      <CheckCircle className="w-4 h-4 animate-pop" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5 text-white/20 group-hover:text-orange-400" />
+                    )}
+                  </div>
+                </button>
+
+                <div className="flex items-center justify-center gap-2 text-white/20">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <p className="text-[9px] font-black uppercase tracking-widest">
+                    End-to-End Encrypted
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 sm:gap-3 pt-0.5 sm:pt-2">
+              <button
+                onClick={handleBack}
+                className="flex-1 bg-white/5 border border-white/10 text-white py-2.5 sm:py-3 md:py-4 rounded-[1.2rem] font-black hover:bg-white/10 transition-all uppercase tracking-widest text-[13px]"
               >
-                <div className="text-center space-y-2">
-                  <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-blue-500/20">
-                    <QrCode className="w-7 h-7 text-blue-500" />
-                  </div>
-                  <h2 className="font-display text-3xl text-white">FUEL THE FLAME</h2>
-                  <p className="text-white/40 text-xs font-medium">Complete ₹360 transaction via Secure UPI</p>
-                </div>
+                Back
+              </button>
 
-                <div className="flex flex-col items-center space-y-6">
-                  <div className="relative group">
-                    <div className="absolute inset-0 bg-white/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <div className="relative p-6 bg-white rounded-[2.5rem] shadow-2xl border-4 border-black">
-                    <div className="w-58 h-62 bg-white rounded-[1.8rem] flex items-center justify-center overflow-hidden shadow-inner">
-                      <img
-                        src={selectedPayment.qr}
-                        alt={`${selectedPayment.name} QR`}
-                        className="w-full h-full object-cover scale-[1.15]"
-                      />
-                    </div>
-                      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-orange-500 text-white text-[8px] font-black uppercase tracking-[0.3em] rounded-full shadow-lg">
-                        {formData.department} Department
-                      </div>
-                    </div>
-                  </div>
+              <button
+                onClick={handleNext}
+                className="flex-[2] bg-white text-black py-2.5 sm:py-3 md:py-4 rounded-[1.2rem] font-black text-base hover:bg-orange-500 hover:text-white transition-all shadow-xl"
+              >
+                I HAVE PAID
+              </button>
+            </div>
+          </motion.div>
+        )}
 
-                  <div className="w-full space-y-3">
-                    <button
-                      onClick={() => {
-                        if (!selectedPayment) return;
-
-                        navigator.clipboard.writeText(selectedPayment.upi);
-                        setCopied(true);
-                        toast.success(`${formData.department} UPI ID copied`);
-
-                        setTimeout(() => setCopied(false), 2000);
-                      }}
-                      className={cn(
-                        "w-full border rounded-xl p-4 text-center group transition-all active:scale-95",
-                        copied
-                          ? "bg-emerald-500/10 border-emerald-500/30"
-                          : "bg-white/5 border-white/10 hover:bg-white/10"
-                      )}
-                    >
-                      <p className="text-[8px] uppercase font-black tracking-widest mb-0.5 text-white/30">
-                        Direct Transfer ID
-                      </p>
-
-                      <div
-                        className={cn(
-                          "flex items-center justify-center gap-2 transition-all",
-                          copied ? "text-emerald-400" : "text-orange-400"
-                        )}
-                      >
-                        <p className="text-base font-mono font-black tracking-wider">
-                          {selectedPayment?.upi || "Select department first"}
-                        </p>
-
-                        {copied ? (
-                          <CheckCircle className="w-4 h-4 animate-pop" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5 text-white/20 group-hover:text-orange-400" />
-                        )}
-                      </div>
-                    </button>
-
-                    <div className="flex items-center justify-center gap-2 text-white/20">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                      <p className="text-[9px] font-black uppercase tracking-widest">
-                        End-to-End Encrypted
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button onClick={handleBack} className="flex-1 bg-white/5 border border-white/10 text-white py-4 rounded-[1.2rem] font-black hover:bg-white/10 transition-all uppercase tracking-widest text-[13px]">
-                    Back
-                  </button>
-                  <button onClick={handleNext} className="flex-[2] bg-white text-black py-4 rounded-[1.2rem] font-black text-base hover:bg-orange-500 hover:text-white transition-all shadow-xl">
-                    I HAVE PAID
-                  </button>
-                </div>
-              </motion.div>
-            )}
 
             {step === 4 && (
               <motion.div 
