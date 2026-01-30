@@ -1715,8 +1715,8 @@ function ScheduleSection() {
 function ContactSection() {
   const TEAM_MEMBERS = [
     { name: "Aniket Adhav", post: "Technical Head", phone: "+91 96573 25070" },
-    { name: "Kartik Gaikwad", post: "Co-coordinator", phone: "+91 70289 38880" },
-    { name: "Ajay Nikam", post: "Co-coordinator", phone: "+91 96074 43111" },
+    { name: "Kartik Gaikwad", post: "Co-COORDINATOR", phone: "+91 70289 38880" },
+    { name: "Pranav Kale", post: "President - DIT SPORTS CLUB", phone: "sportclub.dit@dypvp.edu.in" },
   ];
 
   return (
@@ -1741,32 +1741,69 @@ function ContactSection() {
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
-          >
-            
-            {TEAM_MEMBERS.map((member, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center group hover:border-orange-500/50 transition-all flex flex-col items-center justify-center">
-                <Users className="w-8 h-8 text-orange-500 mb-4" />
-                <h3 className="font-semibold text-white mb-1">{member.name}</h3>
-                <p className="text-orange-500/80 text-[10px] font-bold uppercase tracking-widest mb-2">{member.post}</p>
-                <p className="text-white/50 text-sm">{member.phone}</p>
-              </div>
-            ))}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center group hover:border-orange-500/50 transition-all flex flex-col items-center justify-center">
-              <Mail className="w-8 h-8 text-orange-500 mb-4" />
-              <h3 className="font-semibold text-white mb-2">Email Us</h3>
-              <p className="text-white/50 text-sm break-all">parakramevent@gmail.com</p>
-            </div>
-          </motion.div>
+         <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="
+                grid 
+                grid-cols-1 
+                sm:grid-cols-2 
+                lg:grid-cols-3 
+                gap-8 
+                justify-items-center
+              "
+            >
+              {TEAM_MEMBERS.map((member, i) => (
+                <div
+                  key={i}
+                  className="
+                    w-full 
+                    max-w-xs
+                    bg-white/5 
+                    border 
+                    border-white/10 
+                    rounded-3xl 
+                    p-8
+                    min-h-[220px]
+                    text-center 
+                    group 
+                    hover:border-orange-500/50 
+                    transition-all 
+                    flex 
+                    flex-col 
+                    items-center 
+                    justify-center
+                  "
+                >
+                  <Users className="w-10 h-10 text-orange-500 mb-5" />
+
+                  <h3 className="font-semibold text-white mb-2 text-lg">
+                    {member.name}
+                  </h3>
+
+                  <p className="text-orange-500/80 text-[11px] font-bold uppercase tracking-widest mb-3">
+                    {member.post}
+                  </p>
+
+                  <p className="text-white/60 text-sm">
+                    {member.phone}
+                  </p>
+                </div>
+              ))}
+            </motion.div>
+
         </div>
       </div>
     </section>
   );
 }
+
+
+import Image from "next/image";
+
+
+
 
 function Footer() {
   const policyLinks = [
@@ -1780,9 +1817,13 @@ function Footer() {
     <footer className="relative border-t border-white/10 py-12">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center gap-8">
+
+          {/* LOGO */}
           <div className="font-display text-2xl text-white tracking-wider">
             PARAKRAM
           </div>
+
+          {/* NAV LINKS */}
           <nav className="flex flex-wrap justify-center gap-6">
             {NAV_LINKS.map((link) => (
               <a
@@ -1794,6 +1835,8 @@ function Footer() {
               </a>
             ))}
           </nav>
+
+          {/* POLICIES */}
           <div className="w-full max-w-2xl border-t border-white/10 pt-6">
             <nav className="flex flex-wrap justify-center gap-4 md:gap-6">
               {policyLinks.map((link) => (
@@ -1807,7 +1850,113 @@ function Footer() {
               ))}
             </nav>
           </div>
-          <p className="text-white/30 text-sm">
+
+          {/* 🔥 FOLLOW SECTION */}
+          <div className="flex flex-col items-center gap-5 pt-6">
+            <p className="text-white/50 text-[11px] uppercase tracking-[0.4em] font-semibold">
+              Follow Parakram
+            </p>
+
+            <div className="flex items-center gap-5">
+              {/* Instagram */}
+              <a
+                href="https://www.instagram.com/sports.club_dit?igsh=MW5lZmkzM3l5ZDU5aA=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  group
+                  w-11 h-11
+                  flex items-center justify-center
+                  rounded-xl
+                  bg-white/5
+                  border border-white/10
+                  transition-all
+                  hover:border-pink-500/50
+                  hover:bg-pink-500/10
+                  hover:shadow-[0_0_20px_rgba(236,72,153,0.35)]
+                "
+              >
+                <Image
+                  src="/social/instagram.png"
+                  alt="Instagram"
+                  width={20}
+                  height={20}
+                  className="
+                    brightness-0 invert 
+                    opacity-80 
+                    group-hover:opacity-100
+                  "
+                />
+
+              </a>
+
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/company/dit-sports-club?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAb21jcAPpkmJleHRuA2FlbQIxMQBzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAaeFvX8EEkdqEFezDXI8GQFtNGjBAgzNjI53BsO6B1MECH6Wm89XlRIYw2GC3A_aem_3eiAScWed2bPpPHHBcwjcQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  group
+                  w-11 h-11
+                  flex items-center justify-center
+                  rounded-xl
+                  bg-white/5
+                  border border-white/10
+                  transition-all
+                  hover:border-blue-500/50
+                  hover:bg-blue-500/10
+                  hover:shadow-[0_0_20px_rgba(59,130,246,0.35)]
+                "
+              >
+                <Image
+                  src="/social/linkedin.png"
+                  alt="LinkedIn"
+                  width={20}
+                  height={20}
+                  className="
+                    brightness-0 invert 
+                    opacity-80 
+                    group-hover:opacity-100
+                  "
+                />
+              </a>
+
+              {/* WhatsApp */}
+              <a
+                href="https://wa.me/91XXXXXXXXXX"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  group
+                  w-11 h-11
+                  flex items-center justify-center
+                  rounded-xl
+                  bg-white/5
+                  border border-white/10
+                  transition-all
+                  hover:border-emerald-500/50
+                  hover:bg-emerald-500/10
+                  hover:shadow-[0_0_20px_rgba(34,197,94,0.4)]
+                "
+              >
+               <Image
+                  src="/social/whatsapp.png"
+                  alt="WhatsApp"
+                  width={20}
+                  height={20}
+                  className="
+                    brightness-0 invert 
+                    opacity-80 
+                    group-hover:opacity-100
+                  "
+                />
+              </a>
+            </div>
+          </div>
+
+
+          {/* COPYRIGHT */}
+          <p className="text-white/30 text-sm pt-2">
             © 2026 PARAKRAM. All rights reserved.
           </p>
         </div>
@@ -1815,6 +1964,7 @@ function Footer() {
     </footer>
   );
 }
+
 
 function GlobalBackground() {
   return (

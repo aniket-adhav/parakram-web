@@ -712,54 +712,76 @@ const handleSubmit = async () => {
               </motion.div>
             )}
 
-            {step === 5 && (
-              <motion.div 
-                key="step5"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center space-y-8 py-4"
-              >
-                <div className="relative">
-                  <motion.div 
-                    initial={{ scale: 0, rotate: -45 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", damping: 12, stiffness: 100, delay: 0.2 }}
-                    className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-600 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_20px_50px_rgba(16,185,129,0.4)] relative z-10"
-                  >
-                    <Check className="w-12 h-12 text-white stroke-[3px]" />
-                  </motion.div>
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 bg-emerald-500/20 blur-[70px] rounded-full" />
-                </div>
-
-                <div className="space-y-4">
-                  <h2 className="font-display text-4xl text-white uppercase tracking-tighter leading-none">
-                    ORDER <br /> <span className="text-emerald-500">INITIATED</span>
-                  </h2>
-                  <div className="bg-white/5 border border-white/10 rounded-[2rem] p-8 space-y-4 backdrop-blur-xl">
-                    <div className="flex items-center justify-center gap-2 text-emerald-500">
-                      <Clock className="w-5 h-5 animate-pulse" />
-                      <span className="font-black uppercase tracking-[0.4em] text-[8px]">Manual Validation Pulse</span>
-                    </div>
-                  <p className="text-white/50 text-sm leading-relaxed max-w-[240px] mx-auto font-medium">
-                      Your order request has been successfully submitted.
-                      It is now under <span className="text-white font-semibold">manual verification</span>.
-                    </p>
-
-                    <p className="text-white/40 text-xs leading-relaxed max-w-[240px] mx-auto">
-                      Verification usually takes <span className="text-white font-semibold">12–24 hours</span>.
-                    </p>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={onClose}
-                  className="w-full bg-white text-black py-5 rounded-[2rem] font-black text-lg hover:bg-emerald-500 hover:text-white transition-all shadow-xl active:scale-95 group"
+           {step === 5 && (
+            <motion.div 
+              key="step5"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center space-y-6 sm:space-y-8 py-4"
+            >
+              {/* ICON */}
+              <div className="relative">
+                <motion.div 
+                  initial={{ scale: 0, rotate: -45 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: "spring", damping: 12, stiffness: 100, delay: 0.2 }}
+                  className="
+                    w-20 h-20 sm:w-24 sm:h-24   /* 👈 smaller on mobile */
+                    bg-gradient-to-br from-emerald-400 to-teal-600
+                    rounded-[1.8rem] sm:rounded-[2rem]
+                    flex items-center justify-center
+                    mx-auto
+                    shadow-[0_20px_50px_rgba(16,185,129,0.4)]
+                    relative z-10
+                  "
                 >
-                  VIEW MISSION DASHBOARD
-                  <ArrowRight className="w-5 h-5 inline ml-1 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </motion.div>
-            )}
+                  <Check className="w-10 h-10 sm:w-12 sm:h-12 text-white stroke-[3px]" />
+                </motion.div>
+
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-40 sm:h-40 bg-emerald-500/20 blur-[60px] sm:blur-[70px] rounded-full" />
+              </div>
+
+              {/* TEXT */}
+              <div className="space-y-4">
+                <h2 className="font-display text-3xl sm:text-4xl text-white uppercase tracking-tighter leading-none">
+                  ORDER <br /> <span className="text-emerald-500">INITIATED</span>
+                </h2>
+
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 sm:p-8 space-y-4 backdrop-blur-xl">
+                  <div className="flex items-center justify-center gap-2 text-emerald-500">
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" />
+                    <span className="font-black uppercase tracking-[0.4em] text-[8px]">
+                      Manual Validation Pulse
+                    </span>
+                  </div>
+
+                  <p className="text-white/50 text-sm leading-relaxed max-w-[240px] mx-auto font-medium">
+                    Your order request has been successfully submitted.
+                    It is now under <span className="text-white font-semibold">manual verification</span>.
+                  </p>
+
+                  {/* ✅ NEW IMPORTANT INFO LINE */}
+                  <p className="text-emerald-400 text-[11px] font-black uppercase tracking-widest animate-pulse">
+                    After payment success, you will receive your secret code
+                  </p>
+
+                  <p className="text-white/40 text-xs leading-relaxed max-w-[240px] mx-auto">
+                    Verification usually takes <span className="text-white font-semibold">12–24 hours</span>.
+                  </p>
+                </div>
+              </div>
+
+              {/* BUTTON */}
+              <button 
+                onClick={onClose}
+                className="w-full bg-white text-black py-4 sm:py-5 rounded-[2rem] font-black text-base sm:text-lg hover:bg-emerald-500 hover:text-white transition-all shadow-xl active:scale-95 group"
+              >
+                VIEW MISSION DASHBOARD
+                <ArrowRight className="w-5 h-5 inline ml-1 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </motion.div>
+          )}
+
           </AnimatePresence>
         </div>
       </motion.div>

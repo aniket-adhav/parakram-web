@@ -9,7 +9,7 @@ export default function ContactPage() {
     {
       icon: Mail,
       label: "Email",
-      value: "parakramevent@gmail.com",
+      value: "sportclub.dit@dypvp.edu.in",
     },
     {
       icon: Phone,

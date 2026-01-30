@@ -225,7 +225,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                             <Zap className="w-6 h-6 text-orange-500" />
                           </div>
                           <div>
-                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Entry Tier</p>
+                            <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Jersey Price</p>
                             <p className="text-white text-2xl font-black">₹360</p>
                           </div>
                         </div>
@@ -370,7 +370,13 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                     animate={{ opacity: 1, scale: 1, rotateX: 0 }}
                     className="max-w-3xl mx-auto perspective-1000"
                   >
-                    <div className="relative bg-[#050a15] border border-blue-500/30 rounded-[3rem] p-8 md:p-20 overflow-hidden shadow-[0_0_150px_rgba(30,58,138,0.4)] transform-style-3d">
+                   <div className="
+                      relative bg-[#050a15] border border-blue-500/30 rounded-[3rem]
+                      p-6 sm:p-8 md:p-20
+                      overflow-hidden shadow-[0_0_150px_rgba(30,58,138,0.4)]
+                      transform-style-3d
+                    ">
+
                       {/* Data Streams Animation */}
                       {[...Array(5)].map((_, i) => (
                         <motion.div
@@ -399,13 +405,12 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                       
                       <div className="absolute inset-0 bg-[linear-gradient(rgba(30,58,138,0.05)_1.5px,transparent_1.5px),linear-gradient(90deg,rgba(30,58,138,0.05)_1.5px,transparent_1.5px)] bg-[size:40px_40px]" />
                       
-                      <div className="relative z-10 flex flex-col items-center text-center space-y-12">
+                      <div className="relative z-10 flex flex-col items-center text-center space-y-8 sm:space-y-10 md:space-y-12">
                         <div className="relative">
                           <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                            className="w-44 h-44 rounded-full border-2 border-dashed border-blue-500/50 flex items-center justify-center"
-                          >
+                            className="w-44 h-44 rounded-full border-2 border-dashed border-blue-500/50 flex items-center justify-center">
                             <div className="w-36 h-36 rounded-full border border-blue-400/30 flex items-center justify-center bg-blue-500/10 backdrop-blur-sm">
                               <Shield className="w-14 h-14 text-blue-400" />
                             </div>
@@ -415,14 +420,14 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                             transition={{ duration: 2, repeat: Infinity }}
                             className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full"
                           />
-                          {/* Floating icons */}
+                          {/* Floating icons
                           <motion.div
                             animate={{ y: [0, -10, 0] }}
                             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                             className="absolute -top-4 -right-4 bg-blue-500/20 p-3 rounded-2xl border border-blue-500/30 backdrop-blur-md"
                           >
                             <CheckCircle className="w-5 h-5 text-blue-400" />
-                          </motion.div>
+                          </motion.div> */}
                         </div>
 
                           <div className="space-y-6">
@@ -435,11 +440,11 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                               <span className="text-xs font-black text-blue-400 uppercase tracking-[0.4em]">Transaction Secured</span>
                             </motion.div>
                             
-                              <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight uppercase italic leading-none px-4">
+                              <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-white tracking-tight uppercase italic leading-tight px-2 sm:px-4">
                                 PAYMENT <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-600">UNDER VERIFICATION</span>
                               </h2>
                               
-                              <div className="space-y-4 max-w-lg mx-auto">
+                              <div className="space-y-3 sm:space-y-4 max-w-lg mx-auto">
                                 <p className="text-blue-100 text-lg font-bold">
                                   The <span className="text-blue-400">Parakram Team</span> will verify your order soon.
                                 </p>
@@ -464,20 +469,20 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
                               </div>
                               <div className="flex items-center gap-3 opacity-60">
                                 <Mail className="w-4 h-4" />
-                                <span>parakramevent@gmail.com</span>
+                                <span>sportclub.dit@dypvp.edu.in</span>
                               </div>
                             </div>
                           </div>
                         </div>
 
                         <div className="flex flex-col items-center gap-4 pt-4">
-                          <div className="flex -space-x-3">
+                          <div className="flex -space-x-2 sm:-space-x-3">
                             {[1, 2, 3, 4].map((i) => (
                               <motion.div 
                                 key={i} 
                                 animate={{ scale: [1, 1.1, 1] }}
                                 transition={{ duration: 2, repeat: Infinity, delay: i * 0.2 }}
-                                className="w-10 h-10 rounded-full border-2 border-[#050a15] bg-blue-600/20 flex items-center justify-center backdrop-blur-md"
+                                className="w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 rounded-full border-2 border-[#050a15] bg-blue-600/20 flex items-center justify-center backdrop-blur-md"
                               >
                                 <Shield className="w-4 h-4 text-blue-400" />
                               </motion.div>

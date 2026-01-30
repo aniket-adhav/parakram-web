@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
             <section>
               <h2 className="font-display text-xl text-white mb-3">4. Contact</h2>
               <p className="text-white/70 leading-relaxed">
-                For privacy-related queries, contact us at <span className="text-orange-400">parakramevent@gmail.com</span>
+                For privacy-related queries, contact us at <span className="text-orange-400">sportclub.dit@dypvp.edu.in</span>
               </p>
             </section>
           </motion.div>
