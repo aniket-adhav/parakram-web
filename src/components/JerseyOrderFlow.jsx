@@ -36,7 +36,7 @@ const DEPARTMENT_QRS = [
   { name: "Civil", upi: "gaikwadshivam2004@oksbi", qr: "/qr/Civil.jpeg" },
   { name: "Mechanical", upi: "yashkudale12-2@okhdfcbank", qr: "/qr/Mech.jpeg" },
   { name: "ENTC", upi: "sainathkalkekar863@okaxis", qr: "/qr/Entc.jpeg" },
-  { name: "FE", upi: "thoratpranav0307@okhdfcbank", qr: "/qr/FE.jpeg" },
+  { name: "First Year (All Departments)", upi: "thoratpranav0307@okhdfcbank", qr: "/qr/FE.jpeg" },
   { name: "STR", upi: "gaikwadkartik131-4@oksbi", qr: "/qr/STR.jpeg" },
   { name: "A&R", upi: "idrup04@oksbi", qr: "/qr/A&R.jpeg" },
   { name: "INSTRU", upi: "kanchanpotghan2003@okicici", qr: "/qr/Instru.jpeg" },
