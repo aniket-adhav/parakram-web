@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 
 
 const DEPARTMENTS = [
+  "First Year (All Departments)",
   "Computer",
   "AIDS",
   "Electrical",
   "Civil",
   "Mechanical",
   "ENTC",
-  "FE",
   "STR",
   "A&R",
   "INSTRU",
@@ -238,7 +238,7 @@ const handleSubmit = async () => {
                     <label className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] ml-1">Jersey Name</label>
                     <input 
                       className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-white/10 uppercase font-black tracking-widest"
-                      placeholder="PATIL"
+                      placeholder="ANIKET"
                       maxLength={12}
                       value={formData.jerseyName}
                       onChange={e => setFormData({...formData, jerseyName: e.target.value.toUpperCase()})}
