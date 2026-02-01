@@ -1923,7 +1923,7 @@ function Footer() {
 
               {/* WhatsApp */}
               <a
-                href="https://wa.me/91XXXXXXXXXX"
+                href="https://chat.whatsapp.com/FHCyyrqAjuSDsM04n8RSQe"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="
