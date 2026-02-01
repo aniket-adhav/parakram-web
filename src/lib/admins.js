@@ -3,14 +3,13 @@
 export const MASTER_ADMINS = [
   "aniketadhav022@gmail.com",
   "viveknikam22104@gmail.com",
-  "vaishnavibabar0918@gmail.com",
   "ipranav0009@gmail.com"
 ];
 
 export const DEPARTMENT_ADMINS = {
   "mhaskeomkar066@gmail.com": "Computer", // ✅ COMPUTER ADMIN
   "aniadhav811@gmail.com": "Computer", 
-  "vaishnavibabar9018@gmail.com": "AIDS",
+  "vaishnavibabar0918@gmail.com": "AIDS",
   "nikhilmutha890@gmail.com": "Electrical",
   "gaikwadshivam2004@gmail.com": "Civil",
   "saikardel44@gmail.com": "Mechanical",
