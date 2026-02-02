@@ -8,58 +8,38 @@ const JerseyOrderSchema = new mongoose.Schema(
       lowercase: true,
       index: true,
     },
+    name: String,
+    phone: String,
 
-    name: { type: String, required: true },
-    phone: { type: String, required: true },
+    jerseyName: String,
 
-    jerseyName: { type: String, required: true },
-    jerseyNo: { type: Number, required: true, min: 0, max: 999 },
-
-    size: { type: String, required: true },
-    department: { type: String, required: true, index: true },
-
-    collar: {
-      type: String,
-      enum: ["With Collar", "Without Collar"],
-      required: true,
-    },
-
-    utrNo: {
+    jerseyNo: {
       type: String,
       required: true,
-      index: true, // ❌ NO UNIQUE
+      trim: false,
+      maxlength: 3,
     },
 
-    // ✅ Cloudinary fields
-    screenshotUrl: {
-      type: String,
-      required: true,
-    },
+    size: String,
+    department: String,
+    collar: String,
+    utrNo: String,
 
-    screenshotPublicId: {
-      type: String,
-      required: true,
-    },
+    screenshotUrl: String,
+    screenshotPublicId: String,
 
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
-      index: true,
     },
-
-    secretCode: {
-      type: String,
-      default: undefined,
-      sparse: true, // ✅ THIS IS REQUIRED
-      index: true,
-    },
-
-    verifiedBy: String,
-    verifiedAt: Date,
   },
   { timestamps: true }
 );
 
-export default mongoose.models.JerseyOrder ||
-  mongoose.model("JerseyOrder", JerseyOrderSchema);
+// 🔥 FORCE MODEL RESET (VERY IMPORTANT)
+if (mongoose.models.JerseyOrder) {
+  delete mongoose.models.JerseyOrder;
+}
+
+export default mongoose.model("JerseyOrder", JerseyOrderSchema);

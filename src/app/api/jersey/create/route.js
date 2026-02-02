@@ -12,8 +12,12 @@ export async function POST(req) {
     const name = form.get("name");
     const phone = form.get("phone");
     const jerseyName = form.get("jerseyName");
-    const jerseyNo = Number(form.get("jerseyNo"));
-    const size = form.get("size");
+     const jerseyNo = String(form.get("jerseyNo"));
+      const size = form.get("size");
+      console.log("RAW jerseyNo:", form.get("jerseyNo"));
+      console.log("STRING jerseyNo:", jerseyNo);
+
+
     const collar = form.get("collar");
     const department = form.get("department");
     const utrNo = form.get("utrNo");
@@ -24,7 +28,7 @@ export async function POST(req) {
       !name ||
       !phone ||
       !jerseyName ||
-      Number.isNaN(jerseyNo) ||
+      !jerseyNo ||
       !size ||
       !collar ||
       !department ||

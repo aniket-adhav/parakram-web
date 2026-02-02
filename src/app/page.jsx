@@ -1214,102 +1214,7 @@ function AboutSection() {
 }
 
 
-
-
-
-function RegistrationPopup({ isOpen, onClose, sport }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0, y: 40, rotateX: 15 }}
-        animate={{ scale: 1, opacity: 1, y: 0, rotateX: 0 }}
-        exit={{ scale: 0.9, opacity: 0, y: 40, rotateX: 15 }}
-        transition={{ type: "spring", damping: 20, stiffness: 100 }}
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-xl bg-[#080808] border border-white/10 rounded-[3rem] p-8 md:p-12 relative overflow-hidden shadow-[0_0_120px_rgba(249,115,22,0.1)]"
-      >
-        {/* Elite Background Pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-orange-500 to-transparent" />
-        
-        <button
-          onClick={onClose}
-          className="absolute top-8 right-8 text-white/20 hover:text-white hover:bg-white/5 p-2 rounded-full transition-all z-20"
-        >
-          <X className="w-6 h-6" />
-        </button>
-
-        <div className="text-center space-y-6">
-          <div className="w-20 h-20 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto border border-orange-500/20">
-            <Calendar className="w-10 h-10 text-orange-500" />
-          </div>
-          
-          <div className="space-y-2">
-            <h3 className="font-display text-3xl text-white tracking-tight uppercase italic font-black">Registration Pending</h3>
-            <p className="text-orange-500 font-bold uppercase tracking-widest text-xs">Arena: {sport?.name || "Multiple Sports"}</p>
-          </div>
-
-            <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 text-left space-y-4 relative group">
-              <div className="absolute top-4 right-4 flex gap-1">
-                <div className="w-1 h-1 rounded-full bg-orange-500 animate-pulse" />
-                <div className="w-1 h-1 rounded-full bg-orange-500 animate-pulse delay-75" />
-                <div className="w-1 h-1 rounded-full bg-orange-500 animate-pulse delay-150" />
-              </div>
-              
-              <p className="text-white/70 text-sm leading-relaxed">
-                Registration for <span className="text-white font-bold">PARAKRAM 2026</span> has not officially opened yet. Our coordination committee is finalizing the brackets and schedules.
-              </p>
-              
-
-              <div className="space-y-3 pt-4 border-t border-white/5">
-                <div className="flex items-center gap-3 text-white/40 text-xs">
-                  <CheckCircle className="w-4 h-4 text-orange-500/50" />
-                  <span>Expected Opening: <span className="text-white/60">February 2026</span></span>
-                </div>
-                <div className="flex items-center gap-3 text-white/40 text-xs">
-                  <CheckCircle className="w-4 h-4 text-orange-500/50" />
-                  <span>Notification: <span className="text-white/60">Dashboard Alert & WhatsApp Groups</span></span>
-                </div>
-                <div className="flex items-center gap-3 text-white/40 text-xs">
-                  <CheckCircle className="w-4 h-4 text-orange-500/50" />
-                  <span>Eligibility: <span className="text-white/60">Verified Jersey Required</span></span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <p className="text-white/30 text-[10px] uppercase tracking-[0.2em] font-bold">We will notify you once the battle begins</p>
-              <div className="flex gap-4">
-                <button
-                  onClick={onClose}
-                  className="flex-1 py-5 bg-white/5 border border-white/10 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-white/10 transition-all"
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => {
-
-                    onClose();
-                  }}
-                  className="flex-[2] py-5 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-                >
-                  <Flame className="w-4 h-4" />
-                  Notify Me
-                </button>
-              </div>
-            </div>
-
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
+import { RegistrationPopup } from "@/components/RegistrationPopup";
 
 function SportsSection() {
   const { data: session, status } = useSession();
@@ -1480,7 +1385,7 @@ function SportsSection() {
         </div>
       </div>
       
-      <AnimatePresence>
+       <AnimatePresence>
         {isPopupOpen && (
           <RegistrationPopup 
             isOpen={isPopupOpen} 

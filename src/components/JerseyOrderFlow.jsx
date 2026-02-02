@@ -116,7 +116,7 @@ const handleSubmit = async () => {
     form.append("name", formData.name);
     form.append("phone", formData.phone);
     form.append("jerseyName", formData.jerseyName);
-    form.append("jerseyNo", String(formData.jerseyNo)); // ✅ ensure string
+    form.append("jerseyNo", formData.jerseyNo); // ✅ ensure string
     form.append("department", formData.department);
     form.append("size", formData.size);
     form.append("collar", formData.collar);
@@ -223,13 +223,30 @@ const handleSubmit = async () => {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-[8px] font-black text-white/30 uppercase tracking-[0.2em] ml-1">Phone</label>
-                    <input 
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-white/10 font-medium"
-                      placeholder="Contact"
+                    <input
                       type="tel"
+                      inputMode="numeric"
+                      maxLength={10}
+                      className="
+                        w-full bg-white/5 border border-white/10
+                        rounded-xl px-4 py-3 text-sm text-white
+                        focus:outline-none focus:border-orange-500/50
+                        transition-all
+                        placeholder:text-white/10
+                        font-medium
+                      "
+                      placeholder="Contact"
                       value={formData.phone}
-                      onChange={e => setFormData({...formData, phone: e.target.value})}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, ""); // digits only
+
+                        // allow typing up to 10 digits
+                        if (value.length <= 10) {
+                          setFormData({ ...formData, phone: value });
+                        }
+                      }}
                     />
+
                   </div>
                 </div>
 
@@ -249,30 +266,44 @@ const handleSubmit = async () => {
                       Jersey No
                     </label>
 
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500/50 transition-all placeholder:text-white/10 font-black"
-                      placeholder="0-999"
-                      min={0}
-                      max={999}
-                      value={formData.jerseyNo}
-                      onChange={(e) => {
-                        const value = e.target.value;
+                 <input
+                    type="text"
+                    inputMode="text"
+                    maxLength={3}
+                    className="
+                      w-full bg-white/5 border border-white/10
+                      rounded-xl px-4 py-3 text-sm
+                      text-white font-black
+                      focus:outline-none focus:border-orange-500/50
+                      transition-all
+                      placeholder:text-white/20
+                      placeholder:font-medium
+                      placeholder:tracking-wide
+                    "
+                    placeholder="0–999"
+                    value={formData.jerseyNo}
+                    onChange={(e) => {
+                      let value = e.target.value;
 
-                        // allow empty (for delete)
-                        if (value === "") {
-                          setFormData({ ...formData, jerseyNo: "" });
-                          return;
-                        }
+                      // allow empty
+                      if (value === "") {
+                        setFormData({ ...formData, jerseyNo: "" });
+                        return;
+                      }
 
-                        const num = Number(value);
+                      // digits only
+                      if (!/^[0-9]+$/.test(value)) return;
 
-                        if (num >= 0 && num <= 999) {
-                          setFormData({ ...formData, jerseyNo: value });
-                        }
-                      }}
-                    />
+                      // max 3 characters
+                      if (value.length > 3) return;
+
+                      // keep exactly what user types (07 stays 07)
+                      setFormData({ ...formData, jerseyNo: value });
+                    }}
+                  />
+
+
+
                   </div>
                 </div>
 
@@ -355,7 +386,7 @@ const handleSubmit = async () => {
                   <button 
                   disabled={
                     !formData.name ||
-                    !formData.phone ||
+                    formData.phone.length !== 10 ||
                     !formData.jerseyName ||
                     !formData.jerseyNo ||
                     !formData.department ||
