@@ -19,6 +19,12 @@ const JerseyOrderSchema = new mongoose.Schema(
       trim: false,
       maxlength: 3,
     },
+    secretCode: {
+  type: String,
+  unique: true,
+  sparse: true,
+},
+
 
     size: String,
     department: String,
