@@ -19,19 +19,23 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+const WHATSAPP_ONLY_SPORTS = ["CARROM", "CHESS"];
 
-const COORDINATOR_CODES = {
-  "CS2025COORD": "Computer",
-  "EC2025COORD": "Electronics",
-  "ME2025COORD": "Mechanical",
-  "CE2025COORD": "Civil",
-  "EE2025COORD": "Electrical",
-  "IT2025COORD": "Information Technology",
-  "CH2025COORD": "Chemical",
-  "BT2025COORD": "Biotechnology",
-  "AD2025COORD": "Artificial Intelligence",
-  "FY2025COORD": "First Year",
+
+export const COORDINATOR_CODES = {
+  "FY-K9X2Q": "First Year (All Departments)",
+  "CS-FHA45": "Computer",
+  "AI-7Q9MZ": "AIDS",
+  "EE-X2A8Q": "Electrical",
+  "CV-9MZX1": "Civil",
+  "ME-RZ5A9": "Mechanical",
+  "EC-XM2Z9": "ENTC",
+  "ST-A2XZQ": "STR",
+  "AR-Z9X2M": "A&R",
+  "IN-ZX9QA": "INSTRU",
+  "IT-QA2MZ": "IT",
 };
+
 
 export function RegistrationPopup({ isOpen, onClose, sport }) {
   const [step, setStep] = useState(1); // 1: Code, 2: Category/Form, 3: Success
@@ -100,10 +104,11 @@ export function RegistrationPopup({ isOpen, onClose, sport }) {
         department,
         category,
         coordinatorCode,
-        players: players.map(p => ({
+        players: players.map((p, i) => ({
           ...p,
-          email: p.email.toLowerCase(),
+          email: i === 0 ? p.email.toLowerCase() : undefined,
         })),
+
       }),
     });
 
@@ -138,7 +143,7 @@ export function RegistrationPopup({ isOpen, onClose, sport }) {
 
   if (!isOpen) return null;
 
-  if (sport?.googleForm) {
+  if (WHATSAPP_ONLY_SPORTS.includes(sport?.name?.toUpperCase())) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -225,7 +230,7 @@ export function RegistrationPopup({ isOpen, onClose, sport }) {
                     type="text"
                     value={coordinatorCode}
                     onChange={(e) => setCoordinatorCode(e.target.value.toUpperCase())}
-                    placeholder="COORD_CODE_2026"
+                    placeholder="DEPT CODE"
                     className="relative w-full bg-black/40 border border-white/10 rounded-xl px-4 py-4 text-white text-center text-lg font-mono tracking-[0.2em] focus:outline-none focus:border-white/30 transition-all placeholder:text-white/10"
                   />
                 </div>
@@ -284,24 +289,6 @@ export function RegistrationPopup({ isOpen, onClose, sport }) {
                       </div>
                     )}
                   </div>
-                
-                  {sport?.gender === "Both" && (
-                    <div className="flex sm:inline-flex w-full sm:w-auto bg-white/5 p-1 rounded-xl border border-white/10">
-                      {["Boys", "Girls"].map((cat) => (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => setCategory(cat)}
-                          className={cn(
-                            "flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
-                            category === cat ? "bg-white text-black shadow-lg shadow-white/10" : "text-white/30 hover:text-white hover:bg-white/5"
-                          )}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
-                  )}
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -354,17 +341,20 @@ export function RegistrationPopup({ isOpen, onClose, sport }) {
                                 className="w-full bg-black/20 border border-white/5 rounded-xl pl-10 pr-4 py-3.5 text-xs text-white focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20"
                               />
                             </div>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
-                            <input
-                              required
-                              type="email"
-                              value={player.email}
-                              onChange={(e) => handlePlayerChange(index, "email", e.target.value)}
-                              placeholder="Email Address"
-                              className="w-full bg-black/20 border border-white/5 rounded-xl pl-10 pr-4 py-3.5 text-xs text-white focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20"
-                            />
-                          </div>
+                          {index === 0 && (
+                              <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
+                                <input
+                                  required
+                                  type="email"
+                                  value={player.email}
+                                  onChange={(e) => handlePlayerChange(index, "email", e.target.value)}
+                                  placeholder="Captain Email Address"
+                                  className="w-full bg-black/20 border border-white/5 rounded-xl pl-10 pr-4 py-3.5 text-xs text-white focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20"
+                                />
+                              </div>
+                            )}
+
                           <div className="relative">
                             <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/20" />
                             <select

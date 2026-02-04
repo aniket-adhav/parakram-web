@@ -1,41 +1,63 @@
 import mongoose from "mongoose";
 
+/* ================= PLAYER ================= */
 const PlayerSchema = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: { type: String, lowercase: true },
     year: String,
     mobile: String,
-    secretCode: { type: String, index: true },
+    email: String,       // only captain will have email
+    secretCode: String,
   },
   { _id: false }
 );
 
-const TeamRegistrationSchema = new mongoose.Schema(
+/* ================= TEAM ================= */
+const TeamSchema = new mongoose.Schema(
   {
-    sport: { type: String, required: true, index: true },
-    department: { type: String, required: true, index: true },
-    category: { type: String, required: true }, // Boys/Girls
-
-    coordinatorCode: { type: String, required: true },
-
-    captain: {
-      name: String,
-      email: String,
-      mobile: String,
+    formCode: {
+      type: String,
+      required: true,
+      unique: true,
     },
 
     players: {
       type: [PlayerSchema],
-      validate: [(v) => v.length > 0, "Players required"],
+      required: true,
     },
 
-    pdfUrl: String, // generated PDF link
-
+    pdfGenerated: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.TeamRegistration ||
-  mongoose.model("TeamRegistration", TeamRegistrationSchema);
+/* ================= SPORT ROOT ================= */
+const TeamRegistrationSchema = new mongoose.Schema(
+  {
+    sport: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
+    teams: {
+      type: [TeamSchema],
+      default: [],
+    },
+  },
+  { timestamps: true }
+);
+
+/* 🔥 HOT RELOAD SAFE */
+if (mongoose.models.TeamRegistration) {
+  delete mongoose.models.TeamRegistration;
+}
+
+export default mongoose.model(
+  "TeamRegistration",
+  TeamRegistrationSchema
+);

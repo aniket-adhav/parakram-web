@@ -132,7 +132,7 @@ const NAV_LINKS = [
 const SPORTS = [
     { 
       name: "Cricket", 
-      teamSize: "11 Players", 
+      teamSize: "15/11 Players", 
       category: "Team Sport", 
       icon: "🏏",
       color: "blue",
@@ -142,7 +142,7 @@ const SPORTS = [
     },
     { 
       name: "Football", 
-      teamSize: "11 Players", 
+      teamSize: "10 Players", 
       category: "Team Sport", 
       icon: "⚽",
       color: "emerald",
@@ -152,7 +152,7 @@ const SPORTS = [
     },
     { 
       name: "Badminton", 
-      teamSize: "1-2 Players", 
+      teamSize: "7/5 Players", 
       category: "Individual/Doubles", 
       icon: "🏸",
       color: "purple",
@@ -162,7 +162,7 @@ const SPORTS = [
     },
     { 
       name: "Kabaddi", 
-      teamSize: "7 Players", 
+      teamSize: "9 Players", 
       category: "Team Sport", 
       icon: "🤼",
       color: "red",
@@ -182,7 +182,7 @@ const SPORTS = [
     },
     { 
       name: "Basketball", 
-      teamSize: "5 Players", 
+      teamSize: "12 Players", 
       category: "Team Sport", 
       icon: "🏀",
       color: "orange",
@@ -192,7 +192,7 @@ const SPORTS = [
     },
     { 
       name: "Volleyball", 
-      teamSize: "6 Players", 
+      teamSize: "10 Players", 
       category: "Team Sport", 
       icon: "🏐",
       color: "indigo",
@@ -202,7 +202,7 @@ const SPORTS = [
     },
     { 
       name: "Throwball", 
-      teamSize: "7 Players", 
+      teamSize: "11 Players", 
       category: "Team Sport", 
       icon: "🏐",
       color: "cyan",
@@ -212,7 +212,7 @@ const SPORTS = [
     },
     { 
       name: "Carrom", 
-      teamSize: "1-2 Players", 
+      teamSize: "Individual", 
       category: "Mind Sport", 
       icon: "🎱",
       color: "rose",
@@ -232,7 +232,7 @@ const SPORTS = [
     },
     { 
       name: "Table Tennis", 
-      teamSize: "1-2 Players", 
+      teamSize: "6 Players", 
       category: "Individual/Doubles", 
       icon: "🏓",
       color: "lime",
