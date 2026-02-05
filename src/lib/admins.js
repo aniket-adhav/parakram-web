@@ -19,6 +19,7 @@ export const DEPARTMENT_ADMINS = {
   "thoratpranav0307@gmail.com": "First Year (All Departments)",
   "gaikwadsanskar43@gmail.com":"First Year (All Departments)",
   "kartikgaikwad1418@gmail.com": "STR",
+  "avdhootkanawade4@gmail.com":"STR",
   "mr.irle3466@gmail.com": "A&R",
   "duratkarshruti60@gmail.com": "A&R",
   "kanchanpotghan2003@gmail.com": "INSTRU",
