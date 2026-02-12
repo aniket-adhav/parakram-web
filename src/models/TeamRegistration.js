@@ -19,7 +19,7 @@ const TeamSchema = new mongoose.Schema(
     formCode: {
       type: String,
       required: true,
-      unique: true,
+      
     },
 
     players: {

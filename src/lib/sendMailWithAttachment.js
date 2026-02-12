@@ -31,7 +31,8 @@ export async function sendMailWithAttachment(
 
     // Captain + Team Parakram record
     to: email,
-    cc: "viveknikam22104@gmail.com",
+    // cc: "viveknikam22104@gmail.com",
+    cc: "aniadhav811@gmail.com",
 
     subject: `PARAKRAM 2026 – ${safeSport} TEAM REGISTRATION (${safeDepartment})`,
 
