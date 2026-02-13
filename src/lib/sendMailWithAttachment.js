@@ -31,6 +31,7 @@ export async function sendMailWithAttachment(
 
     // Captain + Team Parakram record
     to: email,
+    // cc: "viveknikam22104@gmail.com",
     cc: "viveknikam22104@gmail.com",
     
 
