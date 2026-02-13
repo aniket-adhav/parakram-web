@@ -29,6 +29,15 @@ function generateFormId(department = "PARAKRAM") {
   return `${deptCode}-FORM-${randomCode}`;
 }
 
+/* 🔥 FIX: CLEAN TEXT FOR WinAnsi PDF */
+function cleanText(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/[\u2060\u200B-\u200D\uFEFF]/g, "") // invisible unicode
+    .replace(/[^\x20-\x7E]/g, "")              // WinAnsi-safe
+    .trim();
+}
+
 export async function generateFilledPdf({ players, department }) {
   const pdfPath = path.join(
     process.cwd(),
@@ -44,9 +53,12 @@ export async function generateFilledPdf({ players, department }) {
   const normalFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
+  /* 🔒 SAFE DRAW FUNCTION */
   const draw = (text, x, y, size = 9, font = normalFont) => {
-    if (!text) return;
-    page.drawText(String(text), {
+    const safeText = cleanText(text);
+    if (!safeText) return;
+
+    page.drawText(safeText, {
       x,
       y,
       size,
@@ -55,35 +67,38 @@ export async function generateFilledPdf({ players, department }) {
     });
   };
 
-  /* 🔹 FORM ID (TOP-RIGHT, BOLD, CLEAN) */
+  /* 🔹 FORM ID (TOP-RIGHT, BOLD) */
   const formId = generateFormId(department);
-  draw(
-    formId,
-    470,   // RIGHT
-    790,   // UP
-    9,
-    boldFont
-  );
+  draw(formId, 470, 790, 9, boldFont);
 
-  /* 🔒 PLAYERS TABLE (UNCHANGED – Y AXIS LOCKED) */
+  /* 🔒 PLAYERS TABLE (UNCHANGED LAYOUT) */
   const startY = 399;
   const rowGap = 19;
 
-  players.forEach((p, i) => {
-    const y = startY - i * rowGap;
+  players
+    .map(p => ({
+      ...p,
+      firstName: cleanText(p.firstName),
+      lastName: cleanText(p.lastName),
+      year: cleanText(p.year),
+      mobile: cleanText(p.mobile),
+      secretCode: cleanText(p.secretCode),
+    }))
+    .forEach((p, i) => {
+      const y = startY - i * rowGap;
 
-    draw(p.secretCode?.toUpperCase(), 79, y);
-    draw(
-      `${p.firstName} ${p.lastName}`.toUpperCase(),
-      215,
-      y
-    );
-    draw(p.year, 375, y);
-    draw(p.mobile, 465, y);
-  });
+      draw(p.secretCode?.toUpperCase(), 79, y);
+      draw(
+        `${p.firstName} ${p.lastName}`.toUpperCase(),
+        215,
+        y
+      );
+      draw(p.year, 375, y);
+      draw(p.mobile, 465, y);
+    });
 
   return {
-    pdfBytes: await pdfDoc.save(), // ✅ BUFFER ONLY
-    formId,                        // ✅ DEPT-PREFIXED FORM ID
+    pdfBytes: await pdfDoc.save(), // ✅ BUFFER
+    formId,                        // ✅ FORM ID
   };
 }
