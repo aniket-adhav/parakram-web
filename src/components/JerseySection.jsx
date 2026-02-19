@@ -38,6 +38,12 @@ const [modalOpen, setModalOpen] = useState(false);
 const [copied, setCopied] = useState(false);
 const [showSizeChart, setShowSizeChart] = useState(false);
 
+const [jerseyClosedOpen, setJerseyClosedOpen] = useState(false);
+
+const handleJerseyClosedClick = () => {
+  setJerseyClosedOpen(true);
+};
+
 
 
 const isSessionLoading = status === "loading";
@@ -179,13 +185,7 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
 
                       <div className="flex flex-col sm:flex-row items-stretch gap-6">
                        <button
-                          onClick={() => {
-                            if (!session) {
-                              toast.error("Please login first to order a jersey");
-                              return;
-                            }
-                            setModalOpen(true);
-                          }}
+                          onClick={handleJerseyClosedClick}
                           className="
                             group relative overflow-hidden
                             bg-white
@@ -756,6 +756,57 @@ if (isSessionLoading || loading || !hasCheckedOrder) return null;
             </motion.div>
           ):null}
         </AnimatePresence>
+        <AnimatePresence>
+          {jerseyClosedOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[300] bg-black/80 backdrop-blur-xl flex items-center justify-center p-4"
+            >
+              <motion.div
+                initial={{ scale: 0.9, y: 30 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: 30 }}
+                className="max-w-md w-full bg-zinc-950 border border-white/10 rounded-[2.5rem] p-8 text-center shadow-2xl"
+              >
+                {/* ICON */}
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center">
+                  <Shirt className="w-8 h-8 text-red-500" />
+                </div>
+
+                {/* TITLE */}
+                <h2 className="text-2xl font-black text-white uppercase tracking-tight mb-2">
+                  Jersey Orders Closed
+                </h2>
+
+                {/* MESSAGE */}
+                <p className="text-white/50 text-sm leading-relaxed mb-6">
+                  Jersey orders for{" "}
+                  <span className="text-white font-semibold">PARAKRAM 2026</span> are now
+                  officially closed.
+                  <br /><br />
+                  Thank you to all warriors who secured their official gear.
+                  Stay connected — jerseys will return stronger next season.
+                </p>
+
+                {/* FOOT NOTE */}
+                <p className="text-orange-400 text-[11px] font-black uppercase tracking-widest mb-6">
+                  Orders reopen in PARAKRAM 2027
+                </p>
+
+                {/* BUTTON */}
+                <button
+                  onClick={() => setJerseyClosedOpen(false)}
+                  className="w-full py-4 bg-white text-black rounded-xl font-black hover:bg-red-500 hover:text-white transition-all"
+                >
+                  CLOSE
+                </button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
 
       <JerseyOrderFlow 
